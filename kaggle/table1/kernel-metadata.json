@@ -1,0 +1,14 @@
+{
+  "id": "mtayyabtahir/dl4stg-pa2-table1",
+  "title": "DL4STG PA2 Table1",
+  "code_file": "run_table1.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

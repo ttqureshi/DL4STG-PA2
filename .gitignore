@@ -16,6 +16,11 @@ MovingMNIST/
 # Orchestrator working notes (not a submission file)
 disclosure_notes.md
 
+# LaTeX build products
+report.aux
+report.log
+report.out
+
 # OS junk
 .DS_Store
 Thumbs.db

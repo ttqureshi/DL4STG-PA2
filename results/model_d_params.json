@@ -1,0 +1,50 @@
+{
+  "model_d_parameters": 480784,
+  "model_a_parameters": 480784,
+  "parameter_cap": 721176,
+  "count_method": "sum(p.numel() for p in model.parameters() if p.requires_grad)",
+  "per_module": {
+    "layer1": 184576,
+    "layer2": 295168,
+    "head": 1040
+  },
+  "reach_d": {
+    "layer1_folded_cells": 2,
+    "layer2_folded_cells": 2,
+    "head_folded_cells": 0,
+    "longest_folded_cells": 4,
+    "fold_pixels": 4,
+    "reach_original_pixels": 16,
+    "layer1_dilation": 2,
+    "layer2_dilation": 2,
+    "layer1_padding": [2, 2],
+    "layer2_padding": [2, 2],
+    "layer1_kernel": [3, 3],
+    "layer2_kernel": [3, 3]
+  },
+  "reach_a": {
+    "layer1_folded_cells": 1,
+    "layer2_folded_cells": 1,
+    "head_folded_cells": 0,
+    "longest_folded_cells": 2,
+    "fold_pixels": 4,
+    "reach_original_pixels": 8,
+    "layer1_dilation": 1,
+    "layer2_dilation": 1,
+    "layer1_padding": [1, 1],
+    "layer2_padding": [1, 1],
+    "layer1_kernel": [3, 3],
+    "layer2_kernel": [3, 3]
+  },
+  "output_shape": [2, 5, 1, 64, 64],
+  "unbatched_output_shape": [5, 1, 64, 64],
+  "output_min": 0.47589191794395447,
+  "output_max": 0.531154215335846,
+  "missing_grads": [],
+  "trained": false,
+  "validation_comparison_run": false,
+  "test_split_used": false,
+  "torch_version": "2.11.0+cpu",
+  "cuda_available": false,
+  "kaggle_kernel": "mtayyabtahir/dl4stg-pa2-model-d-params"
+}

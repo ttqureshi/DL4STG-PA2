@@ -1,0 +1,23 @@
+# Virtual environments and Python caches
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Local data and training runs
+data/
+checkpoints/
+wandb/
+
+# MovingMNIST raw downloads
+mnist_test_seq.npy
+MovingMNIST/
+
+# Orchestrator working notes (not a submission file)
+disclosure_notes.md
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini

@@ -1,0 +1,33 @@
+{
+  "model": "D",
+  "architecture": "Two-layer ConvLSTM, 64 hidden channels, 3x3 kernels, dilation 2, padding 2. Same pixel_unshuffle(4), 1x1 head, pixel_shuffle, sigmoid, and 9-step closed-loop rollout as Model A. No attention.",
+  "validation_comparison_run": false,
+  "candidates_trained": 1,
+  "val_losses": null,
+  "validation_note": "Only the dilated ConvLSTM was implemented. No second candidate was trained, so there are no short validation losses. Videos 8000-8999 were not read.",
+  "seed_for_dummy_forward": 0,
+  "epochs": 0,
+  "official_30_epoch_training": false,
+  "test_split_used": false,
+  "test_indices_not_used": "9000-9999",
+  "parameter_count": 480784,
+  "parameter_cap": 721176,
+  "model_a_parameter_count": 480784,
+  "count_method": "sum(p.numel() for p in model.parameters() if p.requires_grad)",
+  "per_module": {
+    "layer1": 184576,
+    "layer2": 295168,
+    "head": 1040
+  },
+  "reach_original_pixels": 16,
+  "model_a_reach_original_pixels": 8,
+  "reach_path": "u_tau -> layer-1 3x3 dilation 2 (2 folded cells) -> h1_tau -> layer-2 3x3 dilation 2 (2 folded cells) -> 1x1 head and pixel_shuffle (0 cells) -> prediction",
+  "reach_arithmetic": "2 + 2 = 4 folded cells; 4 x 4 original pixels = 16",
+  "output_shape": [2, 5, 1, 64, 64],
+  "unbatched_output_shape": [5, 1, 64, 64],
+  "kaggle_kernel": "mtayyabtahir/dl4stg-pa2-model-d-params",
+  "kaggle_url": "https://www.kaggle.com/code/mtayyabtahir/dl4stg-pa2-model-d-params",
+  "kaggle_private": true,
+  "torch_version": "2.11.0+cpu",
+  "trained": false
+}

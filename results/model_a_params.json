@@ -1,0 +1,111 @@
+{
+  "total": 480784,
+  "frozen": 0,
+  "per_module": {
+    "layer1": 184576,
+    "layer2": 295168,
+    "head": 1040,
+    "unshuffle": 0,
+    "shuffle": 0
+  },
+  "per_parameter": {
+    "layer1.conv.weight": 184320,
+    "layer1.conv.bias": 256,
+    "layer2.conv.weight": 294912,
+    "layer2.conv.bias": 256,
+    "head.weight": 1024,
+    "head.bias": 16
+  },
+  "breakdown": {
+    "layer1": {
+      "in_channels": 80,
+      "out_channels": 256,
+      "kernel_size": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "bias": true,
+      "weight_numel": 184320,
+      "bias_numel": 256,
+      "params": 184576,
+      "formula_params": 184576
+    },
+    "layer2": {
+      "in_channels": 128,
+      "out_channels": 256,
+      "kernel_size": [
+        3,
+        3
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        1,
+        1
+      ],
+      "bias": true,
+      "weight_numel": 294912,
+      "bias_numel": 256,
+      "params": 295168,
+      "formula_params": 295168
+    },
+    "head": {
+      "in_channels": 64,
+      "out_channels": 16,
+      "kernel_size": [
+        1,
+        1
+      ],
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "bias": true,
+      "weight_numel": 1024,
+      "bias_numel": 16,
+      "params": 1040,
+      "formula_params": 1040
+    }
+  },
+  "output_shape": [
+    2,
+    5,
+    1,
+    64,
+    64
+  ],
+  "unbatched_output_shape": [
+    5,
+    1,
+    64,
+    64
+  ],
+  "output_min": 0.4679361581802368,
+  "output_max": 0.5174413919448853,
+  "backward_ok": true,
+  "missing_grads": [],
+  "rollout_steps": 9,
+  "real_inputs_ok": true,
+  "feedback_values_ok": true,
+  "feedback_not_detached": true,
+  "feedback_reaches_later": true,
+  "layer2_reads_new_h1": true,
+  "cuda_available": false,
+  "device": "cpu",
+  "torch_version": "2.11.0+cpu",
+  "trained": false
+}

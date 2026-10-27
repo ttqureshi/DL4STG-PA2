@@ -1,0 +1,14 @@
+{
+  "id": "mtayyabtahir/dl4stg-pa2-model-a-params",
+  "title": "DL4STG PA2 Model A Params",
+  "code_file": "run_model_a_params.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": false,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

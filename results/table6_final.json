@@ -1,0 +1,3680 @@
+{
+  "table": 6,
+  "model": "D+B",
+  "forecaster": "symmetrised D+B",
+  "definition": "f_bar(X) = (1/8) sum_{g in G} g^{-1}(f(g(X)))",
+  "group": "G = {R^a, M R^a : a = 0,1,2,3}. Inverse of R^a is R^{-a}. Each M R^a is its own inverse.",
+  "underlying": "ModelD",
+  "underlying_dilation": 2,
+  "wrapped": "SymmetrisedForecaster",
+  "weights": [
+    "weights/model_db_seed0.pt",
+    "weights/model_db_seed1.pt"
+  ],
+  "params": 480784,
+  "final_model": "symmetrised D+B",
+  "trained_this_run": false,
+  "weights_modified": false,
+  "training_time_source": "results/table5_db.json",
+  "training_time_retimed": false,
+  "mean_epoch_seconds": 20.723609955050005,
+  "test_indices": "9000-9999",
+  "split": null,
+  "n_test": 1000,
+  "batch_size": 32,
+  "t": 1,
+  "reduction": "E(5), C_T and E_T average squared error over the 64x64 pixels and the five forecast horizons of each video, then over the 1000 test videos, at 1x with t=1. C_T = MSE(f_bar(T(X)), T(f_bar(X))). E_T = MSE(f_bar(T(X)), T(Y)). E(2) averages the first two horizon MSEs. At 3x only those two horizons exist.",
+  "inference": "Symmetrised D+B. The clock covers all 8 transforms, underlying forwards, inverse transforms, and the average, for 1000 original 1x t=1 test videos, batch 32, eval, no_grad. The clock starts after each batch is on device. Consistency, speed, and the group-member spread are not included.",
+  "group_member_mse_definition": "Mean squared deviation of the eight restored forecasts from their average, on the 1000 original 1x t=1 test videos. Not part of the inference clock.",
+  "cudnn_deterministic": true,
+  "gpu_name": "2 x Tesla T4",
+  "cuda_device": "Tesla T4",
+  "cuda": true,
+  "torch_version": "2.11.0+cu128",
+  "kaggle_kernel": "mtayyabtahir/dl4stg-pa2-eval-final",
+  "dataset_load_seconds_excluded": 30.22656496100001,
+  "weights_sha256": {
+    "model_db_seed0.pt": "6fb55264a98eca226a5b41d17a317527d43e3081a128dab73eff65ba151887c2",
+    "model_db_seed1.pt": "dc7c55273042eaa082a87d26fe140bf41482de88bb48cc5a8a88fe3a8e12e2f9"
+  },
+  "per_seed": {
+    "0": {
+      "weights": "weights/model_db_seed0.pt",
+      "weights_sha256": "6fb55264a98eca226a5b41d17a317527d43e3081a128dab73eff65ba151887c2",
+      "params": 480784,
+      "metrics": {
+        "E5": 0.028370069167017935,
+        "C_M": 5.565035086821623e-17,
+        "E_M": 0.02837006919085979,
+        "C_R": 4.3897799133545624e-17,
+        "E_R": 0.028370069074630737,
+        "E2_1x": 0.026071623757481573,
+        "E2_2x": 0.02878867704421282,
+        "E2_3x": 0.03110315746068955,
+        "display": {
+          "E5": "0.0284",
+          "C_M": "5.565035e-17",
+          "E_M": "0.0284",
+          "C_R": "4.389780e-17",
+          "E_R": "0.0284",
+          "E2_1x": "0.0261",
+          "E2_2x": "0.0288",
+          "E2_3x": "0.0311"
+        },
+        "C_M_sci": "5.565035e-17",
+        "C_R_sci": "4.389780e-17"
+      },
+      "horizons": {
+        "1x": [
+          0.025106307163834572,
+          0.027036940351128576,
+          0.028566062673926352,
+          0.030050233244895936,
+          0.031090802401304244
+        ],
+        "2x": [
+          0.02721578645706177,
+          0.03036156763136387,
+          0.031939329013228414,
+          0.033505621284246445,
+          0.03503598138689995
+        ],
+        "3x": [
+          0.02923875939846039,
+          0.032967555522918704
+        ],
+        "C_M": [
+          6.904108092472242e-17,
+          6.02725952194712e-17,
+          5.5090981490684397e-17,
+          4.896040578144647e-17,
+          4.488669092475667e-17
+        ],
+        "E_M": [
+          0.025106307104229928,
+          0.027036940231919288,
+          0.02856606249511242,
+          0.03005023366212845,
+          0.031090802460908888
+        ],
+        "C_R": [
+          5.5335240116986325e-17,
+          4.7415497465570344e-17,
+          4.301716411398804e-17,
+          3.835794429701405e-17,
+          3.536314967416936e-17
+        ],
+        "E_R": [
+          0.025106307044625284,
+          0.02703694012761116,
+          0.028566062837839128,
+          0.030050233066082,
+          0.031090802296996116
+        ]
+      },
+      "group_member_mse": 0.00036744412982079666,
+      "group_member_mse_max_video": 0.0011287160450592637,
+      "inference_seconds": 4.898371693999934,
+      "mean_epoch_seconds": 20.670833004966678
+    },
+    "1": {
+      "weights": "weights/model_db_seed1.pt",
+      "weights_sha256": "dc7c55273042eaa082a87d26fe140bf41482de88bb48cc5a8a88fe3a8e12e2f9",
+      "params": 480784,
+      "metrics": {
+        "E5": 0.027853010705113413,
+        "C_M": 5.73959915718557e-17,
+        "E_M": 0.02785301068127155,
+        "C_R": 4.562239734707754e-17,
+        "E_R": 0.027853010669350625,
+        "E2_1x": 0.02566864372044802,
+        "E2_2x": 0.028493194967508316,
+        "E2_3x": 0.03062877272069454,
+        "display": {
+          "E5": "0.0279",
+          "C_M": "5.739599e-17",
+          "E_M": "0.0279",
+          "C_R": "4.562240e-17",
+          "E_R": "0.0279",
+          "E2_1x": "0.0257",
+          "E2_2x": "0.0285",
+          "E2_3x": "0.0306"
+        },
+        "C_M_sci": "5.739599e-17",
+        "C_R_sci": "4.562240e-17"
+      },
+      "horizons": {
+        "1x": [
+          0.02478265479207039,
+          0.026554632648825644,
+          0.028034548684954644,
+          0.029449950441718102,
+          0.030443266957998275
+        ],
+        "2x": [
+          0.026934162676334382,
+          0.03005222725868225,
+          0.03140156769752502,
+          0.032949508532881734,
+          0.03463826021552086
+        ],
+        "3x": [
+          0.02881992007791996,
+          0.03243762536346912
+        ],
+        "C_M": [
+          6.758666939717271e-17,
+          6.123607687988548e-17,
+          5.813023290246352e-17,
+          5.162235023145899e-17,
+          4.8404628448297786e-17
+        ],
+        "E_M": [
+          0.02478265479207039,
+          0.02655463284254074,
+          0.02803454849123955,
+          0.02944995056092739,
+          0.030443266719579698
+        ],
+        "C_R": [
+          5.4839447433700705e-17,
+          4.863202397210886e-17,
+          4.582825311950147e-17,
+          4.0648895568848795e-17,
+          3.8163366641227867e-17
+        ],
+        "E_R": [
+          0.02478265468776226,
+          0.026554632544517516,
+          0.02803454872965813,
+          0.029449950486421586,
+          0.03044326689839363
+        ]
+      },
+      "group_member_mse": 0.0004136440851143561,
+      "group_member_mse_max_video": 0.0011298962635919452,
+      "inference_seconds": 5.003405335000082,
+      "mean_epoch_seconds": 20.776386905133336
+    }
+  },
+  "mean": {
+    "metrics": {
+      "E5": 0.028111539936065674,
+      "C_M": 5.652317122003597e-17,
+      "E_M": 0.02811153993606567,
+      "C_R": 4.476009824031158e-17,
+      "E_R": 0.02811153987199068,
+      "E2_1x": 0.025870133738964796,
+      "E2_2x": 0.028640936005860568,
+      "E2_3x": 0.030865965090692046,
+      "display": {
+        "E5": "0.0281",
+        "C_M": "5.652317e-17",
+        "E_M": "0.0281",
+        "C_R": "4.476010e-17",
+        "E_R": "0.0281",
+        "E2_1x": "0.0259",
+        "E2_2x": "0.0286",
+        "E2_3x": "0.0309"
+      },
+      "C_M_sci": "5.652317e-17",
+      "C_R_sci": "4.476010e-17"
+    },
+    "mean_epoch_seconds": 20.723609955050005,
+    "inference_seconds": 4.950888514500008,
+    "group_member_mse": 0.0003905441074675764
+  },
+  "inference_seconds": {
+    "seed_0": 4.898371693999934,
+    "seed_1": 5.003405335000082,
+    "mean": 4.950888514500008
+  },
+  "consistency_scientific": {
+    "seed_0": {
+      "C_M": "5.565035e-17",
+      "E_M": "0.0284",
+      "C_R": "4.389780e-17",
+      "E_R": "0.0284"
+    },
+    "seed_1": {
+      "C_M": "5.739599e-17",
+      "E_M": "0.0279",
+      "C_R": "4.562240e-17",
+      "E_R": "0.0279"
+    },
+    "mean": {
+      "C_M": "5.652317e-17",
+      "E_M": "0.0281",
+      "C_R": "4.476010e-17",
+      "E_R": "0.0281"
+    }
+  },
+  "figure6": {
+    "seed": 0,
+    "weights": "weights/model_db_seed0.pt",
+    "a": {
+      "path": "figures/figure6a.png",
+      "caption": "Figure 6a. Seed-0 symmetrised D+B at 1x, t=1, on the same four videos as Figure 3. Mirror ranks are dataset indices 9347 and 9257. Rotation ranks are dataset indices 9118 and 9493. These indices are fixed; they are not recomputed from this model. f is the wrapped forecaster, the average of the eight restored group predictions. Each panel is four rows by ten frames: columns 1-5 are the input side and columns 6-10 are the future side. Row 1 is X | f(X), row 2 is T(X) | T(Y), row 3 is T(X) | f(T(X)), row 4 is T(X) | T(f(X)). GIFs keep those four rows and step through the five forecast horizons, with the five input frames held on the left and the current future frame on the right.\nGIF paths: figures/gifs/figure6a_cm_rank1.gif, figures/gifs/figure6a_cm_rank2.gif, figures/gifs/figure6a_cr_rank1.gif, figures/gifs/figure6a_cr_rank2.gif.",
+      "panels": [
+        {
+          "rank": 1,
+          "transform": "M",
+          "dataset_index": 9347,
+          "same_video_as_figure3": true,
+          "C": 7.987980207981938e-17,
+          "C_sci": "7.987980e-17",
+          "E": 0.03403225764632225,
+          "horizon_C": [
+            1.0356936543874347e-16,
+            9.371011369094023e-17,
+            8.989618902725013e-17,
+            5.878106898457385e-17,
+            5.34422732575892e-17
+          ],
+          "horizon_E": [
+            0.028138764202594757,
+            0.028586193919181824,
+            0.03406597673892975,
+            0.03893289342522621,
+            0.04043745994567871
+          ],
+          "gif": "figures/gifs/figure6a_cm_rank1.gif",
+          "tracks": {
+            "f(X)": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  151
+                ],
+                "centroids": [
+                  [
+                    40.75,
+                    36.49
+                  ],
+                  [
+                    16.66,
+                    16.43
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 2,
+                  "areas": [
+                    380,
+                    271
+                  ],
+                  "centroids": [
+                    [
+                      43.74,
+                      37.38
+                    ],
+                    [
+                      17.64,
+                      18.36
+                    ]
+                  ],
+                  "max": 0.6133
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    447,
+                    341
+                  ],
+                  "centroids": [
+                    [
+                      45.04,
+                      38.33
+                    ],
+                    [
+                      17.44,
+                      20.53
+                    ]
+                  ],
+                  "max": 0.6081
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    882
+                  ],
+                  "centroids": [
+                    [
+                      33.01,
+                      31.39
+                    ]
+                  ],
+                  "max": 0.5498
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    1029
+                  ],
+                  "centroids": [
+                    [
+                      32.54,
+                      32.21
+                    ]
+                  ],
+                  "max": 0.4753
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    1119
+                  ],
+                  "centroids": [
+                    [
+                      32.64,
+                      33.57
+                    ]
+                  ],
+                  "max": 0.434
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": true,
+                  "total_distance": 5.29,
+                  "moves": [
+                    {
+                      "drow": 2.99,
+                      "dcol": 0.9,
+                      "src": [
+                        40.75,
+                        36.49
+                      ],
+                      "dst": [
+                        43.74,
+                        37.38
+                      ],
+                      "distance": 3.13
+                    },
+                    {
+                      "drow": 0.98,
+                      "dcol": 1.93,
+                      "src": [
+                        16.66,
+                        16.43
+                      ],
+                      "dst": [
+                        17.64,
+                        18.36
+                      ],
+                      "distance": 2.16
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 8.84,
+                  "moves": [
+                    {
+                      "drow": 4.29,
+                      "dcol": 1.84,
+                      "src": [
+                        40.75,
+                        36.49
+                      ],
+                      "dst": [
+                        45.04,
+                        38.33
+                      ],
+                      "distance": 4.67
+                    },
+                    {
+                      "drow": 0.78,
+                      "dcol": 4.1,
+                      "src": [
+                        16.66,
+                        16.43
+                      ],
+                      "dst": [
+                        17.44,
+                        20.53
+                      ],
+                      "distance": 4.18
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            },
+            "T(Y)": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  151
+                ],
+                "centroids": [
+                  [
+                    40.75,
+                    26.51
+                  ],
+                  [
+                    16.66,
+                    46.57
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    151
+                  ],
+                  "centroids": [
+                    [
+                      44.75,
+                      25.51
+                    ],
+                    [
+                      13.66,
+                      44.57
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    151
+                  ],
+                  "centroids": [
+                    [
+                      47.75,
+                      24.51
+                    ],
+                    [
+                      13.66,
+                      42.57
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    151
+                  ],
+                  "centroids": [
+                    [
+                      49.75,
+                      22.51
+                    ],
+                    [
+                      15.66,
+                      40.57
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    151
+                  ],
+                  "centroids": [
+                    [
+                      45.75,
+                      21.51
+                    ],
+                    [
+                      18.66,
+                      38.57
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    151
+                  ],
+                  "centroids": [
+                    [
+                      42.75,
+                      20.51
+                    ],
+                    [
+                      21.66,
+                      36.57
+                    ]
+                  ],
+                  "max": 1.0
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": true,
+                  "total_distance": 7.73,
+                  "moves": [
+                    {
+                      "drow": 4.0,
+                      "dcol": -1.0,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        44.75,
+                        25.51
+                      ],
+                      "distance": 4.12
+                    },
+                    {
+                      "drow": -3.0,
+                      "dcol": -2.0,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        13.66,
+                        44.57
+                      ],
+                      "distance": 3.61
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 12.28,
+                  "moves": [
+                    {
+                      "drow": 7.0,
+                      "dcol": -2.0,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        47.75,
+                        24.51
+                      ],
+                      "distance": 7.28
+                    },
+                    {
+                      "drow": -3.0,
+                      "dcol": -4.0,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        13.66,
+                        42.57
+                      ],
+                      "distance": 5.0
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 15.93,
+                  "moves": [
+                    {
+                      "drow": 9.0,
+                      "dcol": -4.0,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        49.75,
+                        22.51
+                      ],
+                      "distance": 9.85
+                    },
+                    {
+                      "drow": -1.0,
+                      "dcol": -6.0,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        15.66,
+                        40.57
+                      ],
+                      "distance": 6.08
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 15.32,
+                  "moves": [
+                    {
+                      "drow": 5.0,
+                      "dcol": -5.0,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        45.75,
+                        21.51
+                      ],
+                      "distance": 7.07
+                    },
+                    {
+                      "drow": 2.0,
+                      "dcol": -8.0,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        18.66,
+                        38.57
+                      ],
+                      "distance": 8.25
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 17.5,
+                  "moves": [
+                    {
+                      "drow": 2.0,
+                      "dcol": -6.0,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        42.75,
+                        20.51
+                      ],
+                      "distance": 6.32
+                    },
+                    {
+                      "drow": 5.0,
+                      "dcol": -10.0,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        21.66,
+                        36.57
+                      ],
+                      "distance": 11.18
+                    }
+                  ]
+                }
+              ]
+            },
+            "f(T(X))": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  151
+                ],
+                "centroids": [
+                  [
+                    40.75,
+                    26.51
+                  ],
+                  [
+                    16.66,
+                    46.57
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 2,
+                  "areas": [
+                    380,
+                    271
+                  ],
+                  "centroids": [
+                    [
+                      43.74,
+                      25.62
+                    ],
+                    [
+                      17.64,
+                      44.64
+                    ]
+                  ],
+                  "max": 0.6133
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    447,
+                    341
+                  ],
+                  "centroids": [
+                    [
+                      45.04,
+                      24.67
+                    ],
+                    [
+                      17.44,
+                      42.47
+                    ]
+                  ],
+                  "max": 0.6081
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    882
+                  ],
+                  "centroids": [
+                    [
+                      33.01,
+                      31.61
+                    ]
+                  ],
+                  "max": 0.5498
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    1029
+                  ],
+                  "centroids": [
+                    [
+                      32.54,
+                      30.79
+                    ]
+                  ],
+                  "max": 0.4753
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    1119
+                  ],
+                  "centroids": [
+                    [
+                      32.64,
+                      29.43
+                    ]
+                  ],
+                  "max": 0.434
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": true,
+                  "total_distance": 5.29,
+                  "moves": [
+                    {
+                      "drow": 2.99,
+                      "dcol": -0.9,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        43.74,
+                        25.62
+                      ],
+                      "distance": 3.13
+                    },
+                    {
+                      "drow": 0.98,
+                      "dcol": -1.93,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        17.64,
+                        44.64
+                      ],
+                      "distance": 2.16
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 8.84,
+                  "moves": [
+                    {
+                      "drow": 4.29,
+                      "dcol": -1.84,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        45.04,
+                        24.67
+                      ],
+                      "distance": 4.67
+                    },
+                    {
+                      "drow": 0.78,
+                      "dcol": -4.1,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        17.44,
+                        42.47
+                      ],
+                      "distance": 4.18
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            },
+            "T(f(X))": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  151
+                ],
+                "centroids": [
+                  [
+                    40.75,
+                    26.51
+                  ],
+                  [
+                    16.66,
+                    46.57
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 2,
+                  "areas": [
+                    380,
+                    271
+                  ],
+                  "centroids": [
+                    [
+                      43.74,
+                      25.62
+                    ],
+                    [
+                      17.64,
+                      44.64
+                    ]
+                  ],
+                  "max": 0.6133
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    447,
+                    341
+                  ],
+                  "centroids": [
+                    [
+                      45.04,
+                      24.67
+                    ],
+                    [
+                      17.44,
+                      42.47
+                    ]
+                  ],
+                  "max": 0.6081
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    882
+                  ],
+                  "centroids": [
+                    [
+                      33.01,
+                      31.61
+                    ]
+                  ],
+                  "max": 0.5498
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    1029
+                  ],
+                  "centroids": [
+                    [
+                      32.54,
+                      30.79
+                    ]
+                  ],
+                  "max": 0.4753
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    1119
+                  ],
+                  "centroids": [
+                    [
+                      32.64,
+                      29.43
+                    ]
+                  ],
+                  "max": 0.434
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": true,
+                  "total_distance": 5.29,
+                  "moves": [
+                    {
+                      "drow": 2.99,
+                      "dcol": -0.9,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        43.74,
+                        25.62
+                      ],
+                      "distance": 3.13
+                    },
+                    {
+                      "drow": 0.98,
+                      "dcol": -1.93,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        17.64,
+                        44.64
+                      ],
+                      "distance": 2.16
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 8.84,
+                  "moves": [
+                    {
+                      "drow": 4.29,
+                      "dcol": -1.84,
+                      "src": [
+                        40.75,
+                        26.51
+                      ],
+                      "dst": [
+                        45.04,
+                        24.67
+                      ],
+                      "distance": 4.67
+                    },
+                    {
+                      "drow": 0.78,
+                      "dcol": -4.1,
+                      "src": [
+                        16.66,
+                        46.57
+                      ],
+                      "dst": [
+                        17.44,
+                        42.47
+                      ],
+                      "distance": 4.18
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "rank": 2,
+          "transform": "M",
+          "dataset_index": 9257,
+          "same_video_as_figure3": true,
+          "C": 5.920978412291477e-17,
+          "C_sci": "5.920978e-17",
+          "E": 0.03287665694952011,
+          "horizon_C": [
+            7.885770859819129e-17,
+            6.806677354796752e-17,
+            5.552962713741981e-17,
+            4.7944658852994365e-17,
+            4.565015247800087e-17
+          ],
+          "horizon_E": [
+            0.03161003813147545,
+            0.03207068145275116,
+            0.03196214511990547,
+            0.03384458273649216,
+            0.03489583730697632
+          ],
+          "gif": "figures/gifs/figure6a_cm_rank2.gif",
+          "tracks": {
+            "f(X)": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  175,
+                  147
+                ],
+                "centroids": [
+                  [
+                    15.31,
+                    22.38
+                  ],
+                  [
+                    46.91,
+                    15.62
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    858
+                  ],
+                  "centroids": [
+                    [
+                      28.41,
+                      19.18
+                    ]
+                  ],
+                  "max": 0.5457
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    947
+                  ],
+                  "centroids": [
+                    [
+                      30.65,
+                      19.75
+                    ]
+                  ],
+                  "max": 0.5063
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    876
+                  ],
+                  "centroids": [
+                    [
+                      30.09,
+                      20.0
+                    ]
+                  ],
+                  "max": 0.4891
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    972
+                  ],
+                  "centroids": [
+                    [
+                      30.74,
+                      21.58
+                    ]
+                  ],
+                  "max": 0.3971
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    956
+                  ],
+                  "centroids": [
+                    [
+                      30.08,
+                      23.08
+                    ]
+                  ],
+                  "max": 0.4049
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            },
+            "T(Y)": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  175,
+                  147
+                ],
+                "centroids": [
+                  [
+                    15.31,
+                    40.62
+                  ],
+                  [
+                    46.91,
+                    47.38
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 2,
+                  "areas": [
+                    175,
+                    147
+                  ],
+                  "centroids": [
+                    [
+                      16.31,
+                      43.62
+                    ],
+                    [
+                      44.91,
+                      44.38
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    175,
+                    147
+                  ],
+                  "centroids": [
+                    [
+                      17.31,
+                      47.62
+                    ],
+                    [
+                      42.91,
+                      41.38
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    175,
+                    147
+                  ],
+                  "centroids": [
+                    [
+                      17.31,
+                      49.62
+                    ],
+                    [
+                      39.91,
+                      38.38
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    175,
+                    147
+                  ],
+                  "centroids": [
+                    [
+                      18.31,
+                      46.62
+                    ],
+                    [
+                      37.91,
+                      36.38
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    322
+                  ],
+                  "centroids": [
+                    [
+                      26.35,
+                      38.4
+                    ]
+                  ],
+                  "max": 1.0
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": true,
+                  "total_distance": 6.77,
+                  "moves": [
+                    {
+                      "drow": 1.0,
+                      "dcol": 3.0,
+                      "src": [
+                        15.31,
+                        40.62
+                      ],
+                      "dst": [
+                        16.31,
+                        43.62
+                      ],
+                      "distance": 3.16
+                    },
+                    {
+                      "drow": -2.0,
+                      "dcol": -3.0,
+                      "src": [
+                        46.91,
+                        47.38
+                      ],
+                      "dst": [
+                        44.91,
+                        44.38
+                      ],
+                      "distance": 3.61
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 14.49,
+                  "moves": [
+                    {
+                      "drow": 2.0,
+                      "dcol": 7.0,
+                      "src": [
+                        15.31,
+                        40.62
+                      ],
+                      "dst": [
+                        17.31,
+                        47.62
+                      ],
+                      "distance": 7.28
+                    },
+                    {
+                      "drow": -4.0,
+                      "dcol": -6.0,
+                      "src": [
+                        46.91,
+                        47.38
+                      ],
+                      "dst": [
+                        42.91,
+                        41.38
+                      ],
+                      "distance": 7.21
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 20.62,
+                  "moves": [
+                    {
+                      "drow": 2.0,
+                      "dcol": 9.0,
+                      "src": [
+                        15.31,
+                        40.62
+                      ],
+                      "dst": [
+                        17.31,
+                        49.62
+                      ],
+                      "distance": 9.22
+                    },
+                    {
+                      "drow": -7.0,
+                      "dcol": -9.0,
+                      "src": [
+                        46.91,
+                        47.38
+                      ],
+                      "dst": [
+                        39.91,
+                        38.38
+                      ],
+                      "distance": 11.4
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 20.92,
+                  "moves": [
+                    {
+                      "drow": 3.0,
+                      "dcol": 6.0,
+                      "src": [
+                        15.31,
+                        40.62
+                      ],
+                      "dst": [
+                        18.31,
+                        46.62
+                      ],
+                      "distance": 6.71
+                    },
+                    {
+                      "drow": -9.0,
+                      "dcol": -11.0,
+                      "src": [
+                        46.91,
+                        47.38
+                      ],
+                      "dst": [
+                        37.91,
+                        36.38
+                      ],
+                      "distance": 14.21
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            },
+            "f(T(X))": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  175,
+                  147
+                ],
+                "centroids": [
+                  [
+                    15.31,
+                    40.62
+                  ],
+                  [
+                    46.91,
+                    47.38
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    858
+                  ],
+                  "centroids": [
+                    [
+                      28.41,
+                      43.82
+                    ]
+                  ],
+                  "max": 0.5457
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    947
+                  ],
+                  "centroids": [
+                    [
+                      30.65,
+                      43.25
+                    ]
+                  ],
+                  "max": 0.5063
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    876
+                  ],
+                  "centroids": [
+                    [
+                      30.09,
+                      43.0
+                    ]
+                  ],
+                  "max": 0.4891
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    972
+                  ],
+                  "centroids": [
+                    [
+                      30.74,
+                      41.42
+                    ]
+                  ],
+                  "max": 0.3971
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    956
+                  ],
+                  "centroids": [
+                    [
+                      30.08,
+                      39.92
+                    ]
+                  ],
+                  "max": 0.4049
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            },
+            "T(f(X))": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  175,
+                  147
+                ],
+                "centroids": [
+                  [
+                    15.31,
+                    40.62
+                  ],
+                  [
+                    46.91,
+                    47.38
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    858
+                  ],
+                  "centroids": [
+                    [
+                      28.41,
+                      43.82
+                    ]
+                  ],
+                  "max": 0.5457
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    947
+                  ],
+                  "centroids": [
+                    [
+                      30.65,
+                      43.25
+                    ]
+                  ],
+                  "max": 0.5063
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    876
+                  ],
+                  "centroids": [
+                    [
+                      30.09,
+                      43.0
+                    ]
+                  ],
+                  "max": 0.4891
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    972
+                  ],
+                  "centroids": [
+                    [
+                      30.74,
+                      41.42
+                    ]
+                  ],
+                  "max": 0.3971
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    956
+                  ],
+                  "centroids": [
+                    [
+                      30.08,
+                      39.92
+                    ]
+                  ],
+                  "max": 0.4049
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "rank": 1,
+          "transform": "R",
+          "dataset_index": 9118,
+          "same_video_as_figure3": true,
+          "C": 4.458551676659694e-17,
+          "C_sci": "4.458552e-17",
+          "E": 0.029335097596049308,
+          "horizon_C": [
+            4.706210346151459e-17,
+            4.9231566597669665e-17,
+            4.670364970614841e-17,
+            4.191955468049692e-17,
+            3.8010709387155135e-17
+          ],
+          "horizon_E": [
+            0.025220971554517746,
+            0.027703216299414635,
+            0.028841186314821243,
+            0.032718777656555176,
+            0.032191336154937744
+          ],
+          "gif": "figures/gifs/figure6a_cr_rank1.gif",
+          "tracks": {
+            "f(X)": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  59
+                ],
+                "centroids": [
+                  [
+                    32.05,
+                    14.38
+                  ],
+                  [
+                    36.42,
+                    30.27
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    526
+                  ],
+                  "centroids": [
+                    [
+                      29.64,
+                      20.35
+                    ]
+                  ],
+                  "max": 0.5387
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    493,
+                    109
+                  ],
+                  "centroids": [
+                    [
+                      23.96,
+                      16.68
+                    ],
+                    [
+                      33.86,
+                      37.49
+                    ]
+                  ],
+                  "max": 0.5455
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    541,
+                    112,
+                    86
+                  ],
+                  "centroids": [
+                    [
+                      20.65,
+                      18.66
+                    ],
+                    [
+                      33.5,
+                      37.5
+                    ],
+                    [
+                      34.52,
+                      45.38
+                    ]
+                  ],
+                  "max": 0.5448
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    564,
+                    97,
+                    48
+                  ],
+                  "centroids": [
+                    [
+                      19.38,
+                      19.76
+                    ],
+                    [
+                      35.37,
+                      45.48
+                    ],
+                    [
+                      31.81,
+                      37.54
+                    ]
+                  ],
+                  "max": 0.522
+                },
+                {
+                  "n": 4,
+                  "areas": [
+                    626,
+                    101,
+                    20,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      19.92,
+                      22.6
+                    ],
+                    [
+                      34.86,
+                      45.48
+                    ],
+                    [
+                      35.1,
+                      52.8
+                    ],
+                    [
+                      45.5,
+                      37.5
+                    ]
+                  ],
+                  "max": 0.4971
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": true,
+                  "total_distance": 16.07,
+                  "moves": [
+                    {
+                      "drow": -8.09,
+                      "dcol": 2.3,
+                      "src": [
+                        32.05,
+                        14.38
+                      ],
+                      "dst": [
+                        23.96,
+                        16.68
+                      ],
+                      "distance": 8.41
+                    },
+                    {
+                      "drow": -2.56,
+                      "dcol": 7.22,
+                      "src": [
+                        36.42,
+                        30.27
+                      ],
+                      "dst": [
+                        33.86,
+                        37.49
+                      ],
+                      "distance": 7.66
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 3
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 3
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 4
+                }
+              ]
+            },
+            "T(Y)": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  59
+                ],
+                "centroids": [
+                  [
+                    48.62,
+                    32.05
+                  ],
+                  [
+                    32.73,
+                    36.42
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    59
+                  ],
+                  "centroids": [
+                    [
+                      47.62,
+                      29.05
+                    ],
+                    [
+                      30.73,
+                      38.42
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    59
+                  ],
+                  "centroids": [
+                    [
+                      45.62,
+                      26.05
+                    ],
+                    [
+                      27.73,
+                      41.42
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    59
+                  ],
+                  "centroids": [
+                    [
+                      43.62,
+                      23.05
+                    ],
+                    [
+                      24.73,
+                      43.42
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    59
+                  ],
+                  "centroids": [
+                    [
+                      41.62,
+                      20.05
+                    ],
+                    [
+                      22.73,
+                      45.42
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    177,
+                    59
+                  ],
+                  "centroids": [
+                    [
+                      39.62,
+                      17.05
+                    ],
+                    [
+                      19.73,
+                      48.42
+                    ]
+                  ],
+                  "max": 1.0
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": true,
+                  "total_distance": 5.99,
+                  "moves": [
+                    {
+                      "drow": -1.0,
+                      "dcol": -3.0,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        47.62,
+                        29.05
+                      ],
+                      "distance": 3.16
+                    },
+                    {
+                      "drow": -2.0,
+                      "dcol": 2.0,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        30.73,
+                        38.42
+                      ],
+                      "distance": 2.83
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 13.78,
+                  "moves": [
+                    {
+                      "drow": -3.0,
+                      "dcol": -6.0,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        45.62,
+                        26.05
+                      ],
+                      "distance": 6.71
+                    },
+                    {
+                      "drow": -5.0,
+                      "dcol": 5.0,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        27.73,
+                        41.42
+                      ],
+                      "distance": 7.07
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 20.93,
+                  "moves": [
+                    {
+                      "drow": -5.0,
+                      "dcol": -9.0,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        43.62,
+                        23.05
+                      ],
+                      "distance": 10.3
+                    },
+                    {
+                      "drow": -8.0,
+                      "dcol": 7.0,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        24.73,
+                        43.42
+                      ],
+                      "distance": 10.63
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 27.35,
+                  "moves": [
+                    {
+                      "drow": -7.0,
+                      "dcol": -12.0,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        41.62,
+                        20.05
+                      ],
+                      "distance": 13.89
+                    },
+                    {
+                      "drow": -10.0,
+                      "dcol": 9.0,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        22.73,
+                        45.42
+                      ],
+                      "distance": 13.45
+                    }
+                  ]
+                },
+                {
+                  "matched": true,
+                  "total_distance": 35.18,
+                  "moves": [
+                    {
+                      "drow": -9.0,
+                      "dcol": -15.0,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        39.62,
+                        17.05
+                      ],
+                      "distance": 17.49
+                    },
+                    {
+                      "drow": -13.0,
+                      "dcol": 12.0,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        19.73,
+                        48.42
+                      ],
+                      "distance": 17.69
+                    }
+                  ]
+                }
+              ]
+            },
+            "f(T(X))": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  59
+                ],
+                "centroids": [
+                  [
+                    48.62,
+                    32.05
+                  ],
+                  [
+                    32.73,
+                    36.42
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    526
+                  ],
+                  "centroids": [
+                    [
+                      42.65,
+                      29.64
+                    ]
+                  ],
+                  "max": 0.5387
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    493,
+                    109
+                  ],
+                  "centroids": [
+                    [
+                      46.32,
+                      23.96
+                    ],
+                    [
+                      25.51,
+                      33.86
+                    ]
+                  ],
+                  "max": 0.5455
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    541,
+                    112,
+                    86
+                  ],
+                  "centroids": [
+                    [
+                      44.34,
+                      20.65
+                    ],
+                    [
+                      25.5,
+                      33.5
+                    ],
+                    [
+                      17.62,
+                      34.52
+                    ]
+                  ],
+                  "max": 0.5448
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    564,
+                    97,
+                    48
+                  ],
+                  "centroids": [
+                    [
+                      43.24,
+                      19.38
+                    ],
+                    [
+                      17.52,
+                      35.37
+                    ],
+                    [
+                      25.46,
+                      31.81
+                    ]
+                  ],
+                  "max": 0.522
+                },
+                {
+                  "n": 4,
+                  "areas": [
+                    626,
+                    101,
+                    20,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      40.4,
+                      19.92
+                    ],
+                    [
+                      17.52,
+                      34.86
+                    ],
+                    [
+                      10.2,
+                      35.1
+                    ],
+                    [
+                      25.5,
+                      45.5
+                    ]
+                  ],
+                  "max": 0.4971
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": true,
+                  "total_distance": 16.07,
+                  "moves": [
+                    {
+                      "drow": -2.3,
+                      "dcol": -8.09,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        46.32,
+                        23.96
+                      ],
+                      "distance": 8.41
+                    },
+                    {
+                      "drow": -7.22,
+                      "dcol": -2.56,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        25.51,
+                        33.86
+                      ],
+                      "distance": 7.66
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 3
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 3
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 4
+                }
+              ]
+            },
+            "T(f(X))": {
+              "last_input": {
+                "n": 2,
+                "areas": [
+                  177,
+                  59
+                ],
+                "centroids": [
+                  [
+                    48.62,
+                    32.05
+                  ],
+                  [
+                    32.73,
+                    36.42
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    526
+                  ],
+                  "centroids": [
+                    [
+                      42.65,
+                      29.64
+                    ]
+                  ],
+                  "max": 0.5387
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    493,
+                    109
+                  ],
+                  "centroids": [
+                    [
+                      46.32,
+                      23.96
+                    ],
+                    [
+                      25.51,
+                      33.86
+                    ]
+                  ],
+                  "max": 0.5455
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    541,
+                    112,
+                    86
+                  ],
+                  "centroids": [
+                    [
+                      44.34,
+                      20.65
+                    ],
+                    [
+                      25.5,
+                      33.5
+                    ],
+                    [
+                      17.62,
+                      34.52
+                    ]
+                  ],
+                  "max": 0.5448
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    564,
+                    97,
+                    48
+                  ],
+                  "centroids": [
+                    [
+                      43.24,
+                      19.38
+                    ],
+                    [
+                      17.52,
+                      35.37
+                    ],
+                    [
+                      25.46,
+                      31.81
+                    ]
+                  ],
+                  "max": 0.522
+                },
+                {
+                  "n": 4,
+                  "areas": [
+                    626,
+                    101,
+                    20,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      40.4,
+                      19.92
+                    ],
+                    [
+                      17.52,
+                      34.86
+                    ],
+                    [
+                      10.2,
+                      35.1
+                    ],
+                    [
+                      25.5,
+                      45.5
+                    ]
+                  ],
+                  "max": 0.4971
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 1
+                },
+                {
+                  "matched": true,
+                  "total_distance": 16.07,
+                  "moves": [
+                    {
+                      "drow": -2.3,
+                      "dcol": -8.09,
+                      "src": [
+                        48.62,
+                        32.05
+                      ],
+                      "dst": [
+                        46.32,
+                        23.96
+                      ],
+                      "distance": 8.41
+                    },
+                    {
+                      "drow": -7.22,
+                      "dcol": -2.56,
+                      "src": [
+                        32.73,
+                        36.42
+                      ],
+                      "dst": [
+                        25.51,
+                        33.86
+                      ],
+                      "distance": 7.66
+                    }
+                  ]
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 3
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 3
+                },
+                {
+                  "matched": false,
+                  "src_n": 2,
+                  "dst_n": 4
+                }
+              ]
+            }
+          }
+        },
+        {
+          "rank": 2,
+          "transform": "R",
+          "dataset_index": 9493,
+          "same_video_as_figure3": true,
+          "C": 7.708108875506093e-17,
+          "C_sci": "7.708109e-17",
+          "E": 0.040102219581604,
+          "horizon_C": [
+            9.00844420997774e-17,
+            7.69531020767308e-17,
+            7.586884696468609e-17,
+            7.35822285840139e-17,
+            6.891682405009642e-17
+          ],
+          "horizon_E": [
+            0.03353191167116165,
+            0.03770643472671509,
+            0.04024609178304672,
+            0.04363694787025452,
+            0.04538971185684204
+          ],
+          "gif": "figures/gifs/figure6a_cr_rank2.gif",
+          "tracks": {
+            "f(X)": {
+              "last_input": {
+                "n": 1,
+                "areas": [
+                  327
+                ],
+                "centroids": [
+                  [
+                    46.47,
+                    22.75
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    716
+                  ],
+                  "centroids": [
+                    [
+                      44.03,
+                      25.42
+                    ]
+                  ],
+                  "max": 0.6192
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    781
+                  ],
+                  "centroids": [
+                    [
+                      42.96,
+                      28.31
+                    ]
+                  ],
+                  "max": 0.5997
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    939
+                  ],
+                  "centroids": [
+                    [
+                      40.8,
+                      30.31
+                    ]
+                  ],
+                  "max": 0.5839
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    954,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      39.71,
+                      32.55
+                    ],
+                    [
+                      21.5,
+                      17.5
+                    ]
+                  ],
+                  "max": 0.5892
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    996,
+                    39,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      38.84,
+                      35.11
+                    ],
+                    [
+                      21.77,
+                      21.33
+                    ],
+                    [
+                      21.5,
+                      9.5
+                    ]
+                  ],
+                  "max": 0.5794
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 2
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 3
+                }
+              ]
+            },
+            "T(Y)": {
+              "last_input": {
+                "n": 1,
+                "areas": [
+                  327
+                ],
+                "centroids": [
+                  [
+                    40.25,
+                    46.47
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    338
+                  ],
+                  "centroids": [
+                    [
+                      38.24,
+                      45.12
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    350
+                  ],
+                  "centroids": [
+                    [
+                      35.65,
+                      42.61
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    187,
+                    166
+                  ],
+                  "centroids": [
+                    [
+                      25.45,
+                      45.66
+                    ],
+                    [
+                      42.77,
+                      36.14
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    187,
+                    166
+                  ],
+                  "centroids": [
+                    [
+                      21.45,
+                      44.66
+                    ],
+                    [
+                      41.77,
+                      32.14
+                    ]
+                  ],
+                  "max": 1.0
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    187,
+                    166
+                  ],
+                  "centroids": [
+                    [
+                      17.45,
+                      44.66
+                    ],
+                    [
+                      40.77,
+                      29.14
+                    ]
+                  ],
+                  "max": 1.0
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 2
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 2
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 2
+                }
+              ]
+            },
+            "f(T(X))": {
+              "last_input": {
+                "n": 1,
+                "areas": [
+                  327
+                ],
+                "centroids": [
+                  [
+                    40.25,
+                    46.47
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    716
+                  ],
+                  "centroids": [
+                    [
+                      37.58,
+                      44.03
+                    ]
+                  ],
+                  "max": 0.6192
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    781
+                  ],
+                  "centroids": [
+                    [
+                      34.69,
+                      42.96
+                    ]
+                  ],
+                  "max": 0.5997
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    939
+                  ],
+                  "centroids": [
+                    [
+                      32.69,
+                      40.8
+                    ]
+                  ],
+                  "max": 0.5839
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    954,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      30.45,
+                      39.71
+                    ],
+                    [
+                      45.5,
+                      21.5
+                    ]
+                  ],
+                  "max": 0.5892
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    996,
+                    39,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      27.89,
+                      38.84
+                    ],
+                    [
+                      41.67,
+                      21.77
+                    ],
+                    [
+                      53.5,
+                      21.5
+                    ]
+                  ],
+                  "max": 0.5794
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 2
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 3
+                }
+              ]
+            },
+            "T(f(X))": {
+              "last_input": {
+                "n": 1,
+                "areas": [
+                  327
+                ],
+                "centroids": [
+                  [
+                    40.25,
+                    46.47
+                  ]
+                ],
+                "max": 1.0
+              },
+              "futures": [
+                {
+                  "n": 1,
+                  "areas": [
+                    716
+                  ],
+                  "centroids": [
+                    [
+                      37.58,
+                      44.03
+                    ]
+                  ],
+                  "max": 0.6192
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    781
+                  ],
+                  "centroids": [
+                    [
+                      34.69,
+                      42.96
+                    ]
+                  ],
+                  "max": 0.5997
+                },
+                {
+                  "n": 1,
+                  "areas": [
+                    939
+                  ],
+                  "centroids": [
+                    [
+                      32.69,
+                      40.8
+                    ]
+                  ],
+                  "max": 0.5839
+                },
+                {
+                  "n": 2,
+                  "areas": [
+                    954,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      30.45,
+                      39.71
+                    ],
+                    [
+                      45.5,
+                      21.5
+                    ]
+                  ],
+                  "max": 0.5892
+                },
+                {
+                  "n": 3,
+                  "areas": [
+                    996,
+                    39,
+                    16
+                  ],
+                  "centroids": [
+                    [
+                      27.89,
+                      38.84
+                    ],
+                    [
+                      41.67,
+                      21.77
+                    ],
+                    [
+                      53.5,
+                      21.5
+                    ]
+                  ],
+                  "max": 0.5794
+                }
+              ],
+              "from_last_input": [
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 1
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 2
+                },
+                {
+                  "matched": false,
+                  "src_n": 1,
+                  "dst_n": 3
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "gif_paths": [
+        "figures/gifs/figure6a_cm_rank1.gif",
+        "figures/gifs/figure6a_cm_rank2.gif",
+        "figures/gifs/figure6a_cr_rank1.gif",
+        "figures/gifs/figure6a_cr_rank2.gif"
+      ]
+    },
+    "b": {
+      "path": "figures/figure6b.png",
+      "caption": "Figure 6b. Seed-0 symmetrised D+B on dataset index 9883, the same video as Figure 5. Each speed shows five inputs and the first two predicted and true futures at t=1. At 3x only those two futures exist inside the clip.",
+      "dataset_index": 9883,
+      "same_video_as_figure5": true,
+      "motion": {
+        "1x": {
+          "input_frames": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "target_frames_shown": [
+            6,
+            7
+          ],
+          "last_input": {
+            "n": 2,
+            "areas": [
+              204,
+              134
+            ],
+            "centroids": [
+              [
+                47.2,
+                23.54
+              ],
+              [
+                14.05,
+                13.64
+              ]
+            ],
+            "max": 1.0
+          },
+          "horizons": [
+            {
+              "frame": 6,
+              "mse": 0.03720249608159065,
+              "true": {
+                "n": 2,
+                "areas": [
+                  204,
+                  134
+                ],
+                "centroids": [
+                  [
+                    48.2,
+                    27.54
+                  ],
+                  [
+                    14.05,
+                    16.64
+                  ]
+                ],
+                "max": 1.0
+              },
+              "predicted": {
+                "n": 2,
+                "areas": [
+                  447,
+                  226
+                ],
+                "centroids": [
+                  [
+                    44.36,
+                    26.09
+                  ],
+                  [
+                    16.9,
+                    13.56
+                  ]
+                ],
+                "max": 0.6064
+              },
+              "true_from_last_input": {
+                "matched": true,
+                "total_distance": 7.12,
+                "moves": [
+                  {
+                    "drow": 1.0,
+                    "dcol": 4.0,
+                    "src": [
+                      47.2,
+                      23.54
+                    ],
+                    "dst": [
+                      48.2,
+                      27.54
+                    ],
+                    "distance": 4.12
+                  },
+                  {
+                    "drow": 0.0,
+                    "dcol": 3.0,
+                    "src": [
+                      14.05,
+                      13.64
+                    ],
+                    "dst": [
+                      14.05,
+                      16.64
+                    ],
+                    "distance": 3.0
+                  }
+                ]
+              },
+              "predicted_from_last_input": {
+                "matched": true,
+                "total_distance": 6.67,
+                "moves": [
+                  {
+                    "drow": -2.85,
+                    "dcol": 2.55,
+                    "src": [
+                      47.2,
+                      23.54
+                    ],
+                    "dst": [
+                      44.36,
+                      26.09
+                    ],
+                    "distance": 3.82
+                  },
+                  {
+                    "drow": 2.85,
+                    "dcol": -0.08,
+                    "src": [
+                      14.05,
+                      13.64
+                    ],
+                    "dst": [
+                      16.9,
+                      13.56
+                    ],
+                    "distance": 2.85
+                  }
+                ]
+              }
+            },
+            {
+              "frame": 7,
+              "mse": 0.03777970373630524,
+              "true": {
+                "n": 2,
+                "areas": [
+                  204,
+                  134
+                ],
+                "centroids": [
+                  [
+                    48.2,
+                    30.54
+                  ],
+                  [
+                    14.05,
+                    20.64
+                  ]
+                ],
+                "max": 1.0
+              },
+              "predicted": {
+                "n": 1,
+                "areas": [
+                  854
+                ],
+                "centroids": [
+                  [
+                    33.06,
+                    24.15
+                  ]
+                ],
+                "max": 0.6071
+              },
+              "true_from_last_input": {
+                "matched": true,
+                "total_distance": 14.07,
+                "moves": [
+                  {
+                    "drow": 1.0,
+                    "dcol": 7.0,
+                    "src": [
+                      47.2,
+                      23.54
+                    ],
+                    "dst": [
+                      48.2,
+                      30.54
+                    ],
+                    "distance": 7.07
+                  },
+                  {
+                    "drow": 0.0,
+                    "dcol": 7.0,
+                    "src": [
+                      14.05,
+                      13.64
+                    ],
+                    "dst": [
+                      14.05,
+                      20.64
+                    ],
+                    "distance": 7.0
+                  }
+                ]
+              },
+              "predicted_from_last_input": {
+                "matched": false,
+                "src_n": 2,
+                "dst_n": 1
+              }
+            }
+          ]
+        },
+        "2x": {
+          "input_frames": [
+            1,
+            3,
+            5,
+            7,
+            9
+          ],
+          "target_frames_shown": [
+            11,
+            13
+          ],
+          "last_input": {
+            "n": 2,
+            "areas": [
+              204,
+              134
+            ],
+            "centroids": [
+              [
+                49.2,
+                38.54
+              ],
+              [
+                15.05,
+                27.64
+              ]
+            ],
+            "max": 1.0
+          },
+          "horizons": [
+            {
+              "frame": 11,
+              "mse": 0.03940412029623985,
+              "true": {
+                "n": 2,
+                "areas": [
+                  204,
+                  134
+                ],
+                "centroids": [
+                  [
+                    50.2,
+                    45.54
+                  ],
+                  [
+                    15.05,
+                    34.64
+                  ]
+                ],
+                "max": 1.0
+              },
+              "predicted": {
+                "n": 1,
+                "areas": [
+                  919
+                ],
+                "centroids": [
+                  [
+                    34.41,
+                    39.88
+                  ]
+                ],
+                "max": 0.5817
+              },
+              "true_from_last_input": {
+                "matched": true,
+                "total_distance": 14.07,
+                "moves": [
+                  {
+                    "drow": 1.0,
+                    "dcol": 7.0,
+                    "src": [
+                      49.2,
+                      38.54
+                    ],
+                    "dst": [
+                      50.2,
+                      45.54
+                    ],
+                    "distance": 7.07
+                  },
+                  {
+                    "drow": 0.0,
+                    "dcol": 7.0,
+                    "src": [
+                      15.05,
+                      27.64
+                    ],
+                    "dst": [
+                      15.05,
+                      34.64
+                    ],
+                    "distance": 7.0
+                  }
+                ]
+              },
+              "predicted_from_last_input": {
+                "matched": false,
+                "src_n": 2,
+                "dst_n": 1
+              }
+            },
+            {
+              "frame": 13,
+              "mse": 0.04691598191857338,
+              "true": {
+                "n": 2,
+                "areas": [
+                  204,
+                  134
+                ],
+                "centroids": [
+                  [
+                    49.2,
+                    49.54
+                  ],
+                  [
+                    16.05,
+                    41.64
+                  ]
+                ],
+                "max": 1.0
+              },
+              "predicted": {
+                "n": 1,
+                "areas": [
+                  1146
+                ],
+                "centroids": [
+                  [
+                    34.82,
+                    41.02
+                  ]
+                ],
+                "max": 0.5482
+              },
+              "true_from_last_input": {
+                "matched": true,
+                "total_distance": 25.04,
+                "moves": [
+                  {
+                    "drow": 0.0,
+                    "dcol": 11.0,
+                    "src": [
+                      49.2,
+                      38.54
+                    ],
+                    "dst": [
+                      49.2,
+                      49.54
+                    ],
+                    "distance": 11.0
+                  },
+                  {
+                    "drow": 1.0,
+                    "dcol": 14.0,
+                    "src": [
+                      15.05,
+                      27.64
+                    ],
+                    "dst": [
+                      16.05,
+                      41.64
+                    ],
+                    "distance": 14.04
+                  }
+                ]
+              },
+              "predicted_from_last_input": {
+                "matched": false,
+                "src_n": 2,
+                "dst_n": 1
+              }
+            }
+          ]
+        },
+        "3x": {
+          "input_frames": [
+            1,
+            4,
+            7,
+            10,
+            13
+          ],
+          "target_frames_shown": [
+            16,
+            19
+          ],
+          "last_input": {
+            "n": 2,
+            "areas": [
+              204,
+              134
+            ],
+            "centroids": [
+              [
+                49.2,
+                49.54
+              ],
+              [
+                16.05,
+                41.64
+              ]
+            ],
+            "max": 1.0
+          },
+          "horizons": [
+            {
+              "frame": 16,
+              "mse": 0.037871651351451874,
+              "true": {
+                "n": 2,
+                "areas": [
+                  204,
+                  134
+                ],
+                "centroids": [
+                  [
+                    47.2,
+                    38.54
+                  ],
+                  [
+                    16.05,
+                    49.64
+                  ]
+                ],
+                "max": 1.0
+              },
+              "predicted": {
+                "n": 2,
+                "areas": [
+                  857,
+                  21
+                ],
+                "centroids": [
+                  [
+                    33.84,
+                    44.06
+                  ],
+                  [
+                    16.43,
+                    34.38
+                  ]
+                ],
+                "max": 0.5247
+              },
+              "true_from_last_input": {
+                "matched": true,
+                "total_distance": 19.18,
+                "moves": [
+                  {
+                    "drow": -2.0,
+                    "dcol": -11.0,
+                    "src": [
+                      49.2,
+                      49.54
+                    ],
+                    "dst": [
+                      47.2,
+                      38.54
+                    ],
+                    "distance": 11.18
+                  },
+                  {
+                    "drow": 0.0,
+                    "dcol": 8.0,
+                    "src": [
+                      16.05,
+                      41.64
+                    ],
+                    "dst": [
+                      16.05,
+                      49.64
+                    ],
+                    "distance": 8.0
+                  }
+                ]
+              },
+              "predicted_from_last_input": {
+                "matched": true,
+                "total_distance": 23.58,
+                "moves": [
+                  {
+                    "drow": -15.36,
+                    "dcol": -5.48,
+                    "src": [
+                      49.2,
+                      49.54
+                    ],
+                    "dst": [
+                      33.84,
+                      44.06
+                    ],
+                    "distance": 16.3
+                  },
+                  {
+                    "drow": 0.38,
+                    "dcol": -7.26,
+                    "src": [
+                      16.05,
+                      41.64
+                    ],
+                    "dst": [
+                      16.43,
+                      34.38
+                    ],
+                    "distance": 7.27
+                  }
+                ]
+              }
+            },
+            {
+              "frame": 19,
+              "mse": 0.043859902769327164,
+              "true": {
+                "n": 2,
+                "areas": [
+                  204,
+                  134
+                ],
+                "centroids": [
+                  [
+                    46.2,
+                    27.54
+                  ],
+                  [
+                    17.05,
+                    38.64
+                  ]
+                ],
+                "max": 1.0
+              },
+              "predicted": {
+                "n": 1,
+                "areas": [
+                  1014
+                ],
+                "centroids": [
+                  [
+                    32.12,
+                    37.75
+                  ]
+                ],
+                "max": 0.4776
+              },
+              "true_from_last_input": {
+                "matched": true,
+                "total_distance": 25.37,
+                "moves": [
+                  {
+                    "drow": -3.0,
+                    "dcol": -22.0,
+                    "src": [
+                      49.2,
+                      49.54
+                    ],
+                    "dst": [
+                      46.2,
+                      27.54
+                    ],
+                    "distance": 22.2
+                  },
+                  {
+                    "drow": 1.0,
+                    "dcol": -3.0,
+                    "src": [
+                      16.05,
+                      41.64
+                    ],
+                    "dst": [
+                      17.05,
+                      38.64
+                    ],
+                    "distance": 3.16
+                  }
+                ]
+              },
+              "predicted_from_last_input": {
+                "matched": false,
+                "src_n": 2,
+                "dst_n": 1
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

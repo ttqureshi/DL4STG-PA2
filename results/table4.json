@@ -1,0 +1,1229 @@
+{
+  "model": "A",
+  "t": 1,
+  "gpu_name": "2 x Tesla T4",
+  "cuda_device": "Tesla T4",
+  "cuda": true,
+  "windows": {
+    "1x": {
+      "inputs": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "targets": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    "2x": {
+      "inputs": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "targets": [
+        11,
+        13,
+        15,
+        17,
+        19
+      ]
+    },
+    "3x": {
+      "inputs": [
+        1,
+        4,
+        7,
+        10,
+        13
+      ],
+      "targets": [
+        16,
+        19
+      ],
+      "scored_targets": [
+        16,
+        19
+      ],
+      "note": "The model emits 5 frames. Only the first two targets exist, and only those are scored. E(5) is not reported at 3x."
+    }
+  },
+  "model_A": {
+    "seed_0": {
+      "E2_1x": 0.01913383975625038,
+      "E2_2x": 0.04486753046512604,
+      "E2_3x": 0.05284738726913929,
+      "E5_1x": 0.02250388190150261,
+      "E5_2x": 0.048603133857250215,
+      "display": {
+        "E2_1x": "0.0191",
+        "E2_2x": "0.0449",
+        "E2_3x": "0.0528",
+        "E5_1x": "0.0225",
+        "E5_2x": "0.0486"
+      },
+      "horizons": {
+        "1x": [
+          0.017392724752426147,
+          0.020874954760074615,
+          0.023114124312996864,
+          0.024767329916357994,
+          0.026370275765657425
+        ],
+        "2x": [
+          0.040304798632860184,
+          0.04943026229739189,
+          0.051190085709095,
+          0.051682885736227036,
+          0.050407636910676956
+        ],
+        "3x": [
+          0.048423416912555695,
+          0.057271357625722885
+        ]
+      }
+    },
+    "seed_1": {
+      "E2_1x": 0.018105735071003437,
+      "E2_2x": 0.044783296063542366,
+      "E2_3x": 0.05107101798057556,
+      "E5_1x": 0.02160620652139187,
+      "E5_2x": 0.04930172711610794,
+      "display": {
+        "E2_1x": "0.0181",
+        "E2_2x": "0.0448",
+        "E2_3x": "0.0511",
+        "E5_1x": "0.0216",
+        "E5_2x": "0.0493"
+      },
+      "horizons": {
+        "1x": [
+          0.016391366720199585,
+          0.01982010342180729,
+          0.022117141634225845,
+          0.02396032027900219,
+          0.025742100551724434
+        ],
+        "2x": [
+          0.04075077921152115,
+          0.04881581291556358,
+          0.052575599402189255,
+          0.05294719710946083,
+          0.051419246941804886
+        ],
+        "3x": [
+          0.04770190641283989,
+          0.054440129548311234
+        ]
+      }
+    },
+    "mean": {
+      "E2_1x": 0.01861978741362691,
+      "E2_2x": 0.0448254132643342,
+      "E2_3x": 0.051959202624857426,
+      "E5_1x": 0.022055044211447238,
+      "E5_2x": 0.04895243048667908,
+      "display": {
+        "E2_1x": "0.0186",
+        "E2_2x": "0.0448",
+        "E2_3x": "0.052",
+        "E5_1x": "0.0221",
+        "E5_2x": "0.049"
+      }
+    }
+  },
+  "copy_last": {
+    "E2_1x": 0.054791705682873726,
+    "E2_2x": 0.06606847420334816,
+    "E2_3x": 0.07025302201509476,
+    "E5_1x": 0.06408222541213035,
+    "E5_2x": 0.07188228070735932,
+    "display": {
+      "E2_1x": "0.0548",
+      "E2_2x": "0.0661",
+      "E2_3x": "0.0703",
+      "E5_1x": "0.0641",
+      "E5_2x": "0.0719"
+    },
+    "horizons": {
+      "1x": [
+        0.04916374385356903,
+        0.06041966751217842,
+        0.06688860058784485,
+        0.07077877968549728,
+        0.0731603354215622
+      ],
+      "2x": [
+        0.06038849055767059,
+        0.07174845784902573,
+        0.07525821030139923,
+        0.07582896202802658,
+        0.07618728280067444
+      ],
+      "3x": [
+        0.06597720831632614,
+        0.07452883571386337
+      ]
+    }
+  },
+  "blank": {
+    "E2_1x": 0.04258998855948448,
+    "E2_2x": 0.042510975152254105,
+    "E2_3x": 0.04258544556796551,
+    "E5_1x": 0.04256360679864883,
+    "E5_2x": 0.042540107667446134,
+    "display": {
+      "E2_1x": "0.0426",
+      "E2_2x": "0.0425",
+      "E2_3x": "0.0426",
+      "E5_1x": "0.0426",
+      "E5_2x": "0.0425"
+    },
+    "horizons": {
+      "1x": [
+        0.04261038452386856,
+        0.0425695925951004,
+        0.04257640987634659,
+        0.04253190755844116,
+        0.04252973943948746
+      ],
+      "2x": [
+        0.042522210627794266,
+        0.042499739676713943,
+        0.04248367249965668,
+        0.042554643005132675,
+        0.04264027252793312
+      ],
+      "3x": [
+        0.042530618607997894,
+        0.04264027252793312
+      ]
+    }
+  },
+  "figure5": {
+    "seed": 0,
+    "path": "figures/figure5.png",
+    "dataset_index": 9883,
+    "overlap_check": {
+      "dataset_index": 9883,
+      "local_index": 883,
+      "rule": "8-connected components of pixels above 0.1, specks with area under 15 ignored. A displayed true frame is non-overlapping when exactly two components remain and each has area at least 80. Displayed true frames are the five inputs and the first two targets at 1x, 2x, and 3x (t=1), from make_window. Among videos that pass every displayed frame, and whose two digits move a combined 4 pixels from frame 5 to frame 7, the chosen video maximises the minimum centroid distance. Ties go to the smaller dataset index.",
+      "rule_applied": "area>=80 and combined frame-5-to-7 displacement>=4",
+      "n_qualified": 35,
+      "displayed_true_frames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        11,
+        13,
+        16,
+        19
+      ],
+      "min_centroid_distance": 31.19,
+      "frame5_to_frame7": {
+        "matched": true,
+        "total_distance": 14.07,
+        "moves": [
+          {
+            "drow": 1.0,
+            "dcol": 7.0,
+            "src": [
+              47.2,
+              23.54
+            ],
+            "dst": [
+              48.2,
+              30.54
+            ],
+            "distance": 7.07
+          },
+          {
+            "drow": 0.0,
+            "dcol": 7.0,
+            "src": [
+              14.05,
+              13.64
+            ],
+            "dst": [
+              14.05,
+              20.64
+            ],
+            "distance": 7.0
+          }
+        ]
+      },
+      "per_frame": [
+        {
+          "frame": 1,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              46.2,
+              15.54
+            ],
+            [
+              14.05,
+              25.64
+            ]
+          ],
+          "centroid_distance": 33.7
+        },
+        {
+          "frame": 2,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              46.2,
+              13.54
+            ],
+            [
+              14.05,
+              21.64
+            ]
+          ],
+          "centroid_distance": 33.15
+        },
+        {
+          "frame": 3,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              46.2,
+              16.54
+            ],
+            [
+              14.05,
+              18.64
+            ]
+          ],
+          "centroid_distance": 32.22
+        },
+        {
+          "frame": 4,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              47.2,
+              20.54
+            ],
+            [
+              14.05,
+              14.64
+            ]
+          ],
+          "centroid_distance": 33.67
+        },
+        {
+          "frame": 5,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              47.2,
+              23.54
+            ],
+            [
+              14.05,
+              13.64
+            ]
+          ],
+          "centroid_distance": 34.59
+        },
+        {
+          "frame": 6,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              48.2,
+              27.54
+            ],
+            [
+              14.05,
+              16.64
+            ]
+          ],
+          "centroid_distance": 35.85
+        },
+        {
+          "frame": 7,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              48.2,
+              30.54
+            ],
+            [
+              14.05,
+              20.64
+            ]
+          ],
+          "centroid_distance": 35.55
+        },
+        {
+          "frame": 9,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              49.2,
+              38.54
+            ],
+            [
+              15.05,
+              27.64
+            ]
+          ],
+          "centroid_distance": 35.85
+        },
+        {
+          "frame": 10,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              49.2,
+              41.54
+            ],
+            [
+              15.05,
+              30.64
+            ]
+          ],
+          "centroid_distance": 35.85
+        },
+        {
+          "frame": 11,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              50.2,
+              45.54
+            ],
+            [
+              15.05,
+              34.64
+            ]
+          ],
+          "centroid_distance": 36.8
+        },
+        {
+          "frame": 13,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              49.2,
+              49.54
+            ],
+            [
+              16.05,
+              41.64
+            ]
+          ],
+          "centroid_distance": 34.08
+        },
+        {
+          "frame": 16,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              47.2,
+              38.54
+            ],
+            [
+              16.05,
+              49.64
+            ]
+          ],
+          "centroid_distance": 33.07
+        },
+        {
+          "frame": 19,
+          "n_components": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              46.2,
+              27.54
+            ],
+            [
+              17.05,
+              38.64
+            ]
+          ],
+          "centroid_distance": 31.19
+        }
+      ]
+    },
+    "motion": {
+      "1x": {
+        "input_frames": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "target_frames_scored_in_figure": [
+          6,
+          7
+        ],
+        "last_input": {
+          "n": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              47.2,
+              23.54
+            ],
+            [
+              14.05,
+              13.64
+            ]
+          ],
+          "max": 1.0,
+          "frac_above_0.1": 0.0825
+        },
+        "horizons": [
+          {
+            "frame": 6,
+            "mse": 0.023895610123872757,
+            "true": {
+              "n": 2,
+              "areas": [
+                204,
+                134
+              ],
+              "centroids": [
+                [
+                  48.2,
+                  27.54
+                ],
+                [
+                  14.05,
+                  16.64
+                ]
+              ],
+              "max": 1.0,
+              "frac_above_0.1": 0.0825
+            },
+            "predicted": {
+              "n": 2,
+              "areas": [
+                387,
+                272
+              ],
+              "centroids": [
+                [
+                  47.08,
+                  26.5
+                ],
+                [
+                  14.11,
+                  15.91
+                ]
+              ],
+              "max": 0.817,
+              "frac_above_0.1": 0.1609
+            },
+            "true_from_last_input": {
+              "matched": true,
+              "total_distance": 7.12,
+              "moves": [
+                {
+                  "drow": 1.0,
+                  "dcol": 4.0,
+                  "src": [
+                    47.2,
+                    23.54
+                  ],
+                  "dst": [
+                    48.2,
+                    27.54
+                  ],
+                  "distance": 4.12
+                },
+                {
+                  "drow": 0.0,
+                  "dcol": 3.0,
+                  "src": [
+                    14.05,
+                    13.64
+                  ],
+                  "dst": [
+                    14.05,
+                    16.64
+                  ],
+                  "distance": 3.0
+                }
+              ]
+            },
+            "predicted_from_last_input": {
+              "matched": true,
+              "total_distance": 5.23,
+              "moves": [
+                {
+                  "drow": -0.12,
+                  "dcol": 2.96,
+                  "src": [
+                    47.2,
+                    23.54
+                  ],
+                  "dst": [
+                    47.08,
+                    26.5
+                  ],
+                  "distance": 2.96
+                },
+                {
+                  "drow": 0.05,
+                  "dcol": 2.27,
+                  "src": [
+                    14.05,
+                    13.64
+                  ],
+                  "dst": [
+                    14.11,
+                    15.91
+                  ],
+                  "distance": 2.27
+                }
+              ]
+            }
+          },
+          {
+            "frame": 7,
+            "mse": 0.026570290327072144,
+            "true": {
+              "n": 2,
+              "areas": [
+                204,
+                134
+              ],
+              "centroids": [
+                [
+                  48.2,
+                  30.54
+                ],
+                [
+                  14.05,
+                  20.64
+                ]
+              ],
+              "max": 1.0,
+              "frac_above_0.1": 0.0825
+            },
+            "predicted": {
+              "n": 2,
+              "areas": [
+                395,
+                261
+              ],
+              "centroids": [
+                [
+                  46.67,
+                  30.22
+                ],
+                [
+                  15.21,
+                  19.9
+                ]
+              ],
+              "max": 0.7893,
+              "frac_above_0.1": 0.1602
+            },
+            "true_from_last_input": {
+              "matched": true,
+              "total_distance": 14.07,
+              "moves": [
+                {
+                  "drow": 1.0,
+                  "dcol": 7.0,
+                  "src": [
+                    47.2,
+                    23.54
+                  ],
+                  "dst": [
+                    48.2,
+                    30.54
+                  ],
+                  "distance": 7.07
+                },
+                {
+                  "drow": 0.0,
+                  "dcol": 7.0,
+                  "src": [
+                    14.05,
+                    13.64
+                  ],
+                  "dst": [
+                    14.05,
+                    20.64
+                  ],
+                  "distance": 7.0
+                }
+              ]
+            },
+            "predicted_from_last_input": {
+              "matched": true,
+              "total_distance": 13.07,
+              "moves": [
+                {
+                  "drow": -0.53,
+                  "dcol": 6.68,
+                  "src": [
+                    47.2,
+                    23.54
+                  ],
+                  "dst": [
+                    46.67,
+                    30.22
+                  ],
+                  "distance": 6.7
+                },
+                {
+                  "drow": 1.16,
+                  "dcol": 6.26,
+                  "src": [
+                    14.05,
+                    13.64
+                  ],
+                  "dst": [
+                    15.21,
+                    19.9
+                  ],
+                  "distance": 6.37
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "2x": {
+        "input_frames": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ],
+        "target_frames_scored_in_figure": [
+          11,
+          13
+        ],
+        "last_input": {
+          "n": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              49.2,
+              38.54
+            ],
+            [
+              15.05,
+              27.64
+            ]
+          ],
+          "max": 1.0,
+          "frac_above_0.1": 0.0825
+        },
+        "horizons": [
+          {
+            "frame": 11,
+            "mse": 0.053518202155828476,
+            "true": {
+              "n": 2,
+              "areas": [
+                204,
+                134
+              ],
+              "centroids": [
+                [
+                  50.2,
+                  45.54
+                ],
+                [
+                  15.05,
+                  34.64
+                ]
+              ],
+              "max": 1.0,
+              "frac_above_0.1": 0.0825
+            },
+            "predicted": {
+              "n": 2,
+              "areas": [
+                315,
+                255
+              ],
+              "centroids": [
+                [
+                  47.64,
+                  40.82
+                ],
+                [
+                  16.56,
+                  29.41
+                ]
+              ],
+              "max": 0.8314,
+              "frac_above_0.1": 0.1392
+            },
+            "true_from_last_input": {
+              "matched": true,
+              "total_distance": 14.07,
+              "moves": [
+                {
+                  "drow": 1.0,
+                  "dcol": 7.0,
+                  "src": [
+                    49.2,
+                    38.54
+                  ],
+                  "dst": [
+                    50.2,
+                    45.54
+                  ],
+                  "distance": 7.07
+                },
+                {
+                  "drow": 0.0,
+                  "dcol": 7.0,
+                  "src": [
+                    15.05,
+                    27.64
+                  ],
+                  "dst": [
+                    15.05,
+                    34.64
+                  ],
+                  "distance": 7.0
+                }
+              ]
+            },
+            "predicted_from_last_input": {
+              "matched": true,
+              "total_distance": 5.08,
+              "moves": [
+                {
+                  "drow": -1.56,
+                  "dcol": 2.28,
+                  "src": [
+                    49.2,
+                    38.54
+                  ],
+                  "dst": [
+                    47.64,
+                    40.82
+                  ],
+                  "distance": 2.76
+                },
+                {
+                  "drow": 1.5,
+                  "dcol": 1.77,
+                  "src": [
+                    15.05,
+                    27.64
+                  ],
+                  "dst": [
+                    16.56,
+                    29.41
+                  ],
+                  "distance": 2.32
+                }
+              ]
+            }
+          },
+          {
+            "frame": 13,
+            "mse": 0.06937167793512344,
+            "true": {
+              "n": 2,
+              "areas": [
+                204,
+                134
+              ],
+              "centroids": [
+                [
+                  49.2,
+                  49.54
+                ],
+                [
+                  16.05,
+                  41.64
+                ]
+              ],
+              "max": 1.0,
+              "frac_above_0.1": 0.0825
+            },
+            "predicted": {
+              "n": 2,
+              "areas": [
+                318,
+                276
+              ],
+              "centroids": [
+                [
+                  46.57,
+                  43.69
+                ],
+                [
+                  16.63,
+                  32.1
+                ]
+              ],
+              "max": 0.8296,
+              "frac_above_0.1": 0.145
+            },
+            "true_from_last_input": {
+              "matched": true,
+              "total_distance": 25.04,
+              "moves": [
+                {
+                  "drow": 0.0,
+                  "dcol": 11.0,
+                  "src": [
+                    49.2,
+                    38.54
+                  ],
+                  "dst": [
+                    49.2,
+                    49.54
+                  ],
+                  "distance": 11.0
+                },
+                {
+                  "drow": 1.0,
+                  "dcol": 14.0,
+                  "src": [
+                    15.05,
+                    27.64
+                  ],
+                  "dst": [
+                    16.05,
+                    41.64
+                  ],
+                  "distance": 14.04
+                }
+              ]
+            },
+            "predicted_from_last_input": {
+              "matched": true,
+              "total_distance": 10.52,
+              "moves": [
+                {
+                  "drow": -2.63,
+                  "dcol": 5.16,
+                  "src": [
+                    49.2,
+                    38.54
+                  ],
+                  "dst": [
+                    46.57,
+                    43.69
+                  ],
+                  "distance": 5.79
+                },
+                {
+                  "drow": 1.58,
+                  "dcol": 4.46,
+                  "src": [
+                    15.05,
+                    27.64
+                  ],
+                  "dst": [
+                    16.63,
+                    32.1
+                  ],
+                  "distance": 4.73
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "3x": {
+        "input_frames": [
+          1,
+          4,
+          7,
+          10,
+          13
+        ],
+        "target_frames_scored_in_figure": [
+          16,
+          19
+        ],
+        "last_input": {
+          "n": 2,
+          "areas": [
+            204,
+            134
+          ],
+          "centroids": [
+            [
+              49.2,
+              49.54
+            ],
+            [
+              16.05,
+              41.64
+            ]
+          ],
+          "max": 1.0,
+          "frac_above_0.1": 0.0825
+        },
+        "horizons": [
+          {
+            "frame": 16,
+            "mse": 0.08133120834827423,
+            "true": {
+              "n": 2,
+              "areas": [
+                204,
+                134
+              ],
+              "centroids": [
+                [
+                  47.2,
+                  38.54
+                ],
+                [
+                  16.05,
+                  49.64
+                ]
+              ],
+              "max": 1.0,
+              "frac_above_0.1": 0.0825
+            },
+            "predicted": {
+              "n": 2,
+              "areas": [
+                354,
+                338
+              ],
+              "centroids": [
+                [
+                  47.18,
+                  49.72
+                ],
+                [
+                  16.59,
+                  41.72
+                ]
+              ],
+              "max": 0.8066,
+              "frac_above_0.1": 0.1689
+            },
+            "true_from_last_input": {
+              "matched": true,
+              "total_distance": 19.18,
+              "moves": [
+                {
+                  "drow": -2.0,
+                  "dcol": -11.0,
+                  "src": [
+                    49.2,
+                    49.54
+                  ],
+                  "dst": [
+                    47.2,
+                    38.54
+                  ],
+                  "distance": 11.18
+                },
+                {
+                  "drow": 0.0,
+                  "dcol": 8.0,
+                  "src": [
+                    16.05,
+                    41.64
+                  ],
+                  "dst": [
+                    16.05,
+                    49.64
+                  ],
+                  "distance": 8.0
+                }
+              ]
+            },
+            "predicted_from_last_input": {
+              "matched": true,
+              "total_distance": 2.58,
+              "moves": [
+                {
+                  "drow": -2.02,
+                  "dcol": 0.18,
+                  "src": [
+                    49.2,
+                    49.54
+                  ],
+                  "dst": [
+                    47.18,
+                    49.72
+                  ],
+                  "distance": 2.03
+                },
+                {
+                  "drow": 0.54,
+                  "dcol": 0.08,
+                  "src": [
+                    16.05,
+                    41.64
+                  ],
+                  "dst": [
+                    16.59,
+                    41.72
+                  ],
+                  "distance": 0.55
+                }
+              ]
+            }
+          },
+          {
+            "frame": 19,
+            "mse": 0.07431982457637787,
+            "true": {
+              "n": 2,
+              "areas": [
+                204,
+                134
+              ],
+              "centroids": [
+                [
+                  46.2,
+                  27.54
+                ],
+                [
+                  17.05,
+                  38.64
+                ]
+              ],
+              "max": 1.0,
+              "frac_above_0.1": 0.0825
+            },
+            "predicted": {
+              "n": 1,
+              "areas": [
+                647
+              ],
+              "centroids": [
+                [
+                  31.11,
+                  46.98
+                ]
+              ],
+              "max": 0.8127,
+              "frac_above_0.1": 0.158
+            },
+            "true_from_last_input": {
+              "matched": true,
+              "total_distance": 25.37,
+              "moves": [
+                {
+                  "drow": -3.0,
+                  "dcol": -22.0,
+                  "src": [
+                    49.2,
+                    49.54
+                  ],
+                  "dst": [
+                    46.2,
+                    27.54
+                  ],
+                  "distance": 22.2
+                },
+                {
+                  "drow": 1.0,
+                  "dcol": -3.0,
+                  "src": [
+                    16.05,
+                    41.64
+                  ],
+                  "dst": [
+                    17.05,
+                    38.64
+                  ],
+                  "distance": 3.16
+                }
+              ]
+            },
+            "predicted_from_last_input": {
+              "matched": false,
+              "src_n": 2,
+              "dst_n": 1
+            }
+          }
+        ]
+      }
+    },
+    "caption": "Figure 5. Seed-0 Model A on test video 9883. Each speed shows five inputs and the first two predicted and true futures at t=1. Non-overlap: every displayed true frame has exactly two 8-connected components of pixels above 0.1, each of area at least 80 (area>=80 and combined frame-5-to-7 displacement>=4). 35 videos qualified. Minimum centroid distance 31.19 px."
+  }
+}

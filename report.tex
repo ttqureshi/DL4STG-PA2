@@ -31,49 +31,53 @@
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-  font=\scriptsize,
+  font=\footnotesize,
   box/.style={draw, rounded corners=1.5pt, align=center, inner sep=2.5pt},
   arr/.style={-{Stealth[length=1.6mm]}, semithick},
-  lab/.style={font=\tiny, align=center, fill=white, inner sep=1pt}
+  srcbox/.style={box, text width=3.85cm, font=\scriptsize},
+  proc/.style={box, text width=3.25cm, font=\scriptsize}
 ]
-\begin{scope}[local bounding box=river]
-  \node[box] (res) at (0,0) {Reservoir};
-  \node[box] (s1) at (1.55,0) {S1};
-  \node[box, fill=blue!10] (t1) at (2.35,1.05) {T1\\gauge};
-  \node[box] (s2) at (3.15,0) {S2};
-  \node[box, fill=orange!18] (un) at (3.95,-1.15) {Unmonitored\\no gauge};
-  \node[box] (s3) at (4.75,0) {S3};
-  \node[box] (s4) at (6.15,0) {S4};
-  \draw[arr] (res) -- (s1);
-  \draw[arr] (s1) -- (s2);
-  \draw[arr] (t1) -- (2.35,0.22);
-  \draw[arr] (s2) -- (s3);
-  \draw[arr] (un) -- (3.95,-0.22);
-  \draw[arr] (s3) -- (s4);
-  \node[align=center, font=\tiny] (r1) at (0.7,1.15) {R1\\rainfall only};
-  \node[align=center, font=\tiny] (r2) at (5.45,1.15) {R2\\rainfall only};
-  \node[font=\tiny, align=center] at (3.1,-1.75) {not to scale\\downstream $\rightarrow$};
-\end{scope}
-\begin{scope}[xshift=7.15cm, local bounding box=net]
-  \node[box, text width=3.55cm] (lev) at (0,0) {Levels S1--S4, T1\\$(B,5,H)$ + mask\\+ S3$-$S2};
-  \node[box, text width=3.55cm, below=1.6mm of lev] (rain) {Rain R1, R2\\$(B,2,H)$ + mask\\on the 10-min clock};
-  \node[box, text width=3.55cm, below=1.6mm of rain] (rel) {Release history\\$(B,1,H)$\\actual and schedule};
-  \node[box, text width=3.55cm, below=1.6mm of rel] (fut) {Future release\\$(B,1,F)$\\if announced by $t$};
-  \node[box, text width=3.55cm, below=1.6mm of fut] (stat) {$U$ and distances\\$(8,8)$};
-  \node[font=\tiny, align=center, below=1mm of stat] (not) {future rain, future levels:\\not inputs};
-  \node[box, text width=3.35cm] (z0) at (5.15,-1.15) {$Z_0$ $(B,L,d)$\\$L=8\times36+6=294$\\$H=36$ (A1)\\$F=6$ (A2), $d=64$};
-  \node[box, text width=3.35cm, below=2.4mm of z0] (att) {Two attention blocks\\mask $-\infty$\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
-  \node[box, text width=3.35cm, below=2.4mm of att] (ro) {24 queries\\4 stations $\times$ 6 leads};
-  \node[box, text width=3.35cm, below=2.4mm of ro] (yhat) {$\hat Y$ $(B,4,6)$\\S1--S4\\$+10$ to $+60$ min};
-  \draw[arr] (lev.east) -- node[lab, pos=0.55] {$d=64$} (z0.north west);
-  \draw[arr] (rain.east) -- node[lab, pos=0.45] {$d=64$} (z0.west);
-  \draw[arr] (rel.east) -- node[lab, pos=0.45] {$d=64$} (z0.west);
-  \draw[arr] (fut.east) -- node[lab, pos=0.55] {$d=64$} (z0.south west);
-  \draw[arr] (stat.east) -- (z0.south);
-  \draw[arr] (z0) -- (att);
-  \draw[arr] (att) -- (ro);
-  \draw[arr] (ro) -- (yhat);
-\end{scope}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+% Top row: the river, across the text width.
+\node[box] (res) at (0.9,0) {Reservoir};
+\node[box] (s1) at (3.7,0) {S1};
+\node[box, fill=blue!10] (t1) at (5.25,1.15) {T1, gauge};
+\node[box] (s2) at (6.8,0) {S2};
+\node[box, fill=orange!18] (un) at (8.4,-1.15) {no gauge};
+\node[box] (s3) at (10.0,0) {S3};
+\node[box] (s4) at (13.4,0) {S4};
+\draw[arr] (res) -- (s1);
+\draw[arr] (s1) -- (s2);
+\draw[arr] (t1) -- (5.25,0.32);
+\draw[arr] (s2) -- (s3);
+\draw[arr] (un) -- (8.4,-0.32);
+\draw[arr] (s3) -- (s4);
+\node[font=\scriptsize, align=center] at (2.2,1.22) {R1\\rainfall only};
+\node[font=\scriptsize, align=center] at (11.7,1.22) {R2\\rainfall only};
+\node[font=\scriptsize] at (2.6,-1.95) {not to scale, downstream $\rightarrow$};
+% Bottom row: the model. One open arrow carries the two labels.
+\node[srcbox] (lev) at (2.05,-3.25) {Levels S1--S4, T1\\$(B,5,H)$ + mask + S3$-$S2};
+\node[srcbox, below=1.6mm of lev] (rain) {Rain R1, R2, on the 10-min clock\\$(B,2,H)$ + mask};
+\node[srcbox, below=1.6mm of rain] (rel) {Release history:\\actual and schedule\\$(B,1,H)$};
+\node[srcbox, below=1.6mm of rel] (fut) {Future release if announced by $t$\\$(B,1,F)$};
+\node[srcbox, below=1.6mm of fut] (stat) {$U$ and distances $(8,8)$};
+\node[font=\scriptsize, align=center, below=1.4mm of stat] {future rain and future levels:\\not inputs};
+\coordinate (join) at ([xshift=6mm]rel.east);
+\node[proc, anchor=west] (z0) at ([xshift=36mm]join) {$Z_0$ $(B,L,d)$\\$L=8\times 36+6=294$\\$H=36$ (A1), $F=6$ (A2)\\$d=64$};
+\node[proc, anchor=west] (att) at ([xshift=7mm]z0.east) {Two attention blocks\\mask score $-\infty$\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
+\node[proc, below=1.8mm of att] (ro) {24 queries\\4 stations $\times$ 6 leads};
+\node[proc, below=1.8mm of ro] (yhat) {$\hat Y$ $(B,4,6)$\\S1--S4, $+10$ to $+60$ min};
+\draw[arr] (lev.east) -- (lev.east -| join);
+\draw[arr] (rain.east) -- (rain.east -| join);
+\draw[arr] (rel.east) -- (join);
+\draw[arr] (fut.east) -- (fut.east -| join);
+\draw[arr] (stat.east) -- (stat.east -| join);
+\draw (lev.east -| join) -- (stat.east -| join);
+\draw[arr] (join) -- node[above=2.6mm, font=\scriptsize, inner sep=1pt] {project to $d=64$} node[below=2.6mm, font=\scriptsize, inner sep=1pt] {concatenate} (z0.west);
+\draw[arr] (z0) -- (att);
+\draw[arr] (att) -- (ro);
+\draw[arr] (ro) -- (yhat);
 \end{tikzpicture}
 \caption*{River, not to scale, and the forecast model. Each source has its own projection to width $d=64$ before the concatenation. $H=36$ and $F=6$ are assumptions A1 and A2.}
 \end{figure}
@@ -82,17 +86,17 @@ The eight series are projected and concatenated, and $\hat Y$ is the six future 
 
 \subsection{Assumptions}
 
-The brief leaves the history length and the shape of the hour-ahead output unspecified, so A1 and A2 state them.
+The river layout, the recorded series, and the lack of a travel time are given; A1--A16 are not.
 
 \begin{itemize}
-\item \textbf{A1.} History is \(H=36\) bins, six hours, ending at issuance.
+\item \textbf{A1.} History is \(H=36\) bins, six hours, ending at issuance. Six hours is several times the one-hour horizon, and a longer travel time is seen only through the level it has already produced.
 \item \textbf{A2.} The output is six levels at each of S1--S4, at $+10$ through $+60$ minutes, so $\hat Y$ has shape $(B,4,6)$.
-\item \textbf{A3.} The archive covers at least one year, including wet and dry periods.
-\item \textbf{A4.} On a normal issuance the bin that closes at $t$ has arrived.
-\item \textbf{A5.} Gauge errors are small beside a rise that matters.
-\item \textbf{A6.} Each rain reading goes in the 10-minute bin that contains its timestamp, and a carried bin gets no attention weight.
+\item \textbf{A3.} The archive covers at least one year, including wet and dry periods. Inference still uses only the 36-bin window.
+\item \textbf{A4.} On a normal issuance the bin that closes at $t$ has arrived. If it has not, it stays masked and the forecast still goes out.
+\item \textbf{A5.} Gauge errors are small beside a rise that matters. There is no separate denoiser.
+\item \textbf{A6.} Each rain reading goes in the 10-minute bin that contains its timestamp. An empty bin repeats the last reading and is marked carried, and a carried bin gets no attention weight.
 \item \textbf{A7.} Releases are piecewise constant between effective times, and the latest already-public announcement is used.
-\item \textbf{A8.} S1--S4 and T1 share 10-minute boundaries.
+\item \textbf{A8.} S1--S4 and T1 share 10-minute boundaries, so one lag index is the same time at every station.
 \item \textbf{A9.} Water moves downstream, and travel time is not distance divided by a constant speed.
 \item \textbf{A10.} The target is level, and each series is standardized by its training mean and standard deviation.
 \item \textbf{A11.} R1 and R2 are not assigned to reaches; both are tokens, with gauge-to-station distance as a feature.
@@ -100,7 +104,7 @@ The brief leaves the history length and the shape of the hour-ahead output unspe
 \item \textbf{A13.} Future rainfall and future levels are not inputs, and a future release is written only when it was announced by issuance.
 \item \textbf{A14.} Training uses the same clock: inputs at $t$ obey A13, and the target is the level at $t+\Delta,\ldots,t+6\Delta$.
 \item \textbf{A15.} The loss is mean squared error of the standardized level over stations, leads, and the batch, with missing targets left out.
-\item \textbf{A16.} Along-river distance is used among the reservoir, S1--S4, and T1, and gauge-to-station distance is straight-line.
+\item \textbf{A16.} Along-river distance is used among the reservoir, S1--S4, and T1, and gauge-to-station distance is straight-line. Neither distance is converted into a travel time.
 \end{itemize}
 
 \subsection{Task and data table}
@@ -130,7 +134,7 @@ Forecast \(\hat Y\) & \((B,4,6)\) & \(t+\Delta\ldots t+6\Delta\) & Target, never
 \end{tabular}
 \end{table}
 
-Series order is S1, S2, S3, S4, T1, R1, R2, release, so a shared lag index is the same 10-minute bin.
+\(B\) is the batch, the series axis is S1, S2, S3, S4, T1, R1, R2, release, and \(H\) and \(F\) are the history and lead bins.
 
 \subsection{Notation, equations, and objective}
 
@@ -148,25 +152,25 @@ A key whose mask is 0 has score \(-\infty\). The block is residual attention plu
 \[
 \frac{\sum_{s,h} m_{s,h}(\hat y^{\mathrm{std}}_{s,h}-y^{\mathrm{std}}_{s,h})^{2}}{\sum_{s,h} m_{s,h}}.
 \]
-One attention block connects every remaining token, so S4 can see the reservoir in one step, and a second block reuses a mix the first has formed. With \(L=294\) and \(d=64\), one block is about \(1.1\times 10^{7}\) multiply-adds, and the ten-minute gap is set by when the gauges arrive. What is fixed is the series list, \(U\), and the rule that an announcement enters only if it is already public. What is learned is every matrix, both blocks, the readout, and the four bias scalars.
+One attention block connects every remaining token, so S4 can see the reservoir in one step, and a second block reuses a mix the first has formed. With \(L=294\) and \(d=64\), one block is about \(1.1\times 10^{7}\) multiply-adds, and the ten-minute gap is set by when the gauges arrive. The release is the only upstream series into S1, and T1 enters at S2. Rain and the S3$-$S2 residual reach a station as tokens in the same attention, and they are not rows of \(U\). What is fixed is the series list, \(U\), and the rule that an announcement enters only if it is already public. What is learned is every matrix, both blocks, the readout, and the two scalars \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\).
 
 \subsection{Operation}
 
 \textbf{Missing observations.} A missing value is set to 0 after standardization and its mask to 0, so that token gets score \(-\infty\).
 
-\textbf{Delayed observations.} A bin that has not arrived by \(t\) is missing, and the readout sees \(\tau_s\), the bins since that station last reported.
+\textbf{Delayed observations.} A bin that has not arrived by \(t\) is missing, and the readout sees \(\tau_s\), the bins since that station last reported. The forecast is issued on the 10-minute mark and does not wait.
 
-\textbf{Announced future releases.} The latest announcement with announcement time at or before \(t\) and effective time in the lead bin has known mask 1, and if none exists the mask is 0.
+\textbf{Announced future releases.} The latest announcement with announcement time at or before \(t\) and effective time in the lead bin has known mask 1, and if none exists the mask is 0. A published flat schedule has mask 1, so ``no change'' is different from ``no announcement.''
 
-\textbf{Scheduled versus actual releases.} History bins carry the recorded actual and the announced schedule, and the future channel is only the schedule.
+\textbf{Scheduled versus actual releases.} History bins carry the recorded actual and the announced schedule, and the future channel is only the schedule. The actual release after \(t\) is not an input. The next issuance sees it in the history.
 
 Each issuance is one forward pass of two attention blocks over 294 tokens of width 64 and 24 queries, which fits between the ten-minute bins.
 
 \subsection{Uncertainties and limitations}
 
-The unmonitored tributary can raise S3 and S4 with no trace in S2, T1, the release, or R1 and R2 until that water reaches S3. I use the S3$-$S2 residual and S3's history, and S4 reads those tokens in one attention block.
+The unmonitored tributary can raise S3 and S4 with no trace in S2, T1, the release, or R1 and R2 until that water reaches S3. I use the S3$-$S2 residual and S3's history, and S4 reads those tokens in one attention block. Inflow that has not reached S3 by \(t\) is still unseen.
 
-A changing travel time can put a peak in the wrong 10-minute bin. The model attends over every lag in the \(H=36\) window, with a separate query for each of the six leads, and uses distance as a feature.
+A changing travel time can put a peak in the wrong 10-minute bin. The model attends over every lag in the \(H=36\) window, with a separate query for each of the six leads, and uses distance as a feature. A travel time longer than \(H\), or a speed change during the future hour, is still unseen.
 
 A gauge on the unmonitored tributary would be a ninth series and would show that inflow before it reaches S3. Travel times at a low stage and a high stage would check whether \(H=36\) cuts off ordinary waves, and a catchment plus an error bar would fix which gauge belongs to which reach and how the loss weights the instruments. S1--S4 are still forecast without those extras.
 
@@ -329,30 +333,29 @@ Model B is Model A trained at \(1\times\) with one uniform draw from the eight e
 \begin{table}[H]
 \centering
 \caption{Test metrics for A--D. Consistency is at \(1\times\). \(E(2)\) at \(3\times\) uses the first two horizons only. Training and inference times are seconds on a Tesla T4.}
-\scriptsize
-\resizebox{\textwidth}{!}{%
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\newcommand{\cell}[2]{\begin{tabular}[t]{@{}c@{}}#1\\{\scriptsize #2}\end{tabular}}
 \begin{tabular}{lcccc}
 \toprule
  & A & B & C & D \\
 \midrule
-\(E(5)\), \(1\times\) & 0.0221 (0.0225, 0.0216) & 0.0223 (0.0226, 0.0221) & 0.0267 (0.0268, 0.0267) & 0.0287 (0.0283, 0.0290) \\
-\(C_M\) & 0.00183 (0.00168, 0.00198) & 0.00106 (0.00108, 0.00105) & \(9.30\times10^{-4}\) & \(9.81\times10^{-4}\) \\
-\(E_M\) & 0.0227 (0.0232, 0.0223) & 0.0224 (0.0227, 0.0221) & 0.0269 (0.0270, 0.0269) & 0.0289 (0.0286, 0.0292) \\
-\(C_R\) & 0.00308 (0.00315, 0.00302) & 0.00132 (0.00126, 0.00139) & 0.00205 (0.00188, 0.00222) & 0.00181 (0.00166, 0.00197) \\
-\(E_R\) & 0.0238 (0.0242, 0.0234) & 0.0223 (0.0226, 0.0219) & 0.0279 (0.0279, 0.0278) & 0.0296 (0.0292, 0.0299) \\
-\(E(2)\), \(1\times\) & 0.0186 (0.0191, 0.0181) & 0.0186 (0.0187, 0.0184) & 0.0230 (0.0230, 0.0230) & 0.0263 (0.0261, 0.0266) \\
-\(E(2)\), \(2\times\) & 0.0448 (0.0449, 0.0448) & 0.0446 (0.0444, 0.0448) & 0.0288 (0.0288, 0.0289) & 0.0293 (0.0289, 0.0297) \\
-\(E(2)\), \(3\times\) & 0.0520 (0.0528, 0.0511) & 0.0506 (0.0496, 0.0515) & 0.0335 (0.0336, 0.0334) & 0.0316 (0.0311, 0.0321) \\
+\(E(5)\), \(1\times\) & \cell{0.0221}{(0.0225, 0.0216)} & \cell{0.0223}{(0.0226, 0.0221)} & \cell{0.0267}{(0.0268, 0.0267)} & \cell{0.0287}{(0.0283, 0.0290)} \\
+\(C_M\) & \cell{0.00183}{(0.00168, 0.00198)} & \cell{0.00106}{(0.00108, 0.00105)} & \cell{\(9.30\times10^{-4}\)}{(\(8.82\times10^{-4}\), \(9.77\times10^{-4}\))} & \cell{\(9.81\times10^{-4}\)}{(\(9.90\times10^{-4}\), \(9.71\times10^{-4}\))} \\
+\(E_M\) & \cell{0.0227}{(0.0232, 0.0223)} & \cell{0.0224}{(0.0227, 0.0221)} & \cell{0.0269}{(0.0270, 0.0269)} & \cell{0.0289}{(0.0286, 0.0292)} \\
+\(C_R\) & \cell{0.00308}{(0.00315, 0.00302)} & \cell{0.00132}{(0.00126, 0.00139)} & \cell{0.00205}{(0.00188, 0.00222)} & \cell{0.00181}{(0.00166, 0.00197)} \\
+\(E_R\) & \cell{0.0238}{(0.0242, 0.0234)} & \cell{0.0223}{(0.0226, 0.0219)} & \cell{0.0279}{(0.0279, 0.0278)} & \cell{0.0296}{(0.0292, 0.0299)} \\
+\(E(2)\), \(1\times\) & \cell{0.0186}{(0.0191, 0.0181)} & \cell{0.0186}{(0.0187, 0.0184)} & \cell{0.0230}{(0.0230, 0.0230)} & \cell{0.0263}{(0.0261, 0.0266)} \\
+\(E(2)\), \(2\times\) & \cell{0.0448}{(0.0449, 0.0448)} & \cell{0.0446}{(0.0444, 0.0448)} & \cell{0.0288}{(0.0288, 0.0289)} & \cell{0.0293}{(0.0289, 0.0297)} \\
+\(E(2)\), \(3\times\) & \cell{0.0520}{(0.0528, 0.0511)} & \cell{0.0506}{(0.0496, 0.0515)} & \cell{0.0335}{(0.0336, 0.0334)} & \cell{0.0316}{(0.0311, 0.0321)} \\
 Parameters & 480{,}784 & 480{,}784 & 480{,}784 & 480{,}784 \\
 s/epoch & 11.3 & 11.6 & 12.4 & 19.9 \\
 Inference (s) & 0.461 & 0.464 & 0.453 & 0.720 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 \end{table}
 
-Model C's seed pair for \(C_M\) is \(8.82\times10^{-4}\) and \(9.77\times10^{-4}\). Model D's is \(9.90\times10^{-4}\) and \(9.71\times10^{-4}\).
-
-\textbf{Q2.13.} The mirror and rotation gaps are appearance: Model B cuts \(C_M\) from 0.00183 to 0.00106 and \(C_R\) from 0.00308 to 0.00132, with \(E(5)\) still 0.0223 and \(E(2)\) still 0.0446 at \(2\times\) and 0.0506 at \(3\times\). The \(2\times\) failure is unfamiliar motion: Model C, at the same 8-pixel reach, has \(E(2)=0.0288\) at \(2\times\) against Model A's 0.0448 and Model B's 0.0446, and Model D is level with C at 0.0293, inside the 6.64-pixel typical step. The \(3\times\) failure is that missing example and then reach: Model C falls from 0.0520 to 0.0335, and Model D, reach 16, is lower at 0.0316, while a typical \(3\times\) step of 9.95 pixels is past 8. More \(3\times\) windows cannot add the folded cells that dilation 2 inserts.
+\textbf{Q2.13.} The mirror and rotation gaps are appearance: Model B cuts \(C_M\) from 0.00183 to 0.00106 and \(C_R\) from 0.00308 to 0.00132, with \(E(5)\) still 0.0223 and \(E(2)\) still 0.0446 at \(2\times\) and 0.0506 at \(3\times\). The \(2\times\) failure is unfamiliar motion: Model C, at the same 8-pixel reach, has \(E(2)=0.0288\) at \(2\times\) against Model A's 0.0448 and Model B's 0.0446, and Model D is level with C at 0.0293, inside the 6.64-pixel typical step. At \(3\times\), Model C moves \(E(2)\) from 0.0520 to 0.0335, and Model D reaches 0.0316. Most of that drop is from seeing the fast clips. The further drop from dilation is about 0.0019, close to D's extra error on the original clips.
 
 \textbf{Q2.14.} Model B's \(E(5)\) at \(1\times\) is 0.0223 against Model A's 0.0221, so the symmetry training did not cost the original clips, and it cut \(C_M\) to 0.00106 and \(C_R\) to 0.00132. Model C's \(E(5)\) rises to 0.0267, a rise of 0.00467, while \(E(2)\) falls by 0.0160 at \(2\times\) and by 0.0185 at \(3\times\), and \(E(2)\) at \(1\times\) rises from 0.0186 to 0.0230. Model D's \(E(5)\) is 0.0287; against C the \(1\times\) cost is about 0.00193 and the \(3\times\) gain is about 0.00185, and at \(2\times\) D's 0.0293 does not beat C's 0.0288.
 
@@ -406,7 +409,9 @@ I used Cursor (Composer) while coding and while drafting this report.
 
 \noindent\textbf{Coding prompts (summary):} set up the repo off Google Drive; run Table 1; check that Model A has 480{,}784 parameters; train on a Kaggle Tesla T4; make the optical-flow figure; design the river model; design Model D; train B, C, D, and D+B; symmetrise the forecaster; write the report; shorten the report and draw the Question 1 architecture.
 
+{\sloppy
 \noindent\textbf{Model help on code:} wrote \texttt{transforms.py}, \texttt{windows.py}, \texttt{data.py}, \texttt{metrics.py}, \texttt{convlstm.py}, \texttt{model\_a.py}, \texttt{model\_d.py}, and \texttt{symmetrise.py}; wrote the training scripts \texttt{train\_a.py}, \texttt{train\_b.py}, \texttt{train\_c.py}, \texttt{train\_d.py}, and \texttt{train\_db.py}; ran Table 1, Figure 1, and every training and evaluation job on Kaggle (Tesla T4). Model D's dilation and the choice to train D+B were made in that work.
+\par}
 
 \noindent\textbf{My edits on code:} checked that Table 1 matches, that Model A and Model D each have 480{,}784 parameters, that Q2.5 and Q2.11 were pushed before the experiments they precede, and that every reported test number matches the result JSON files.
 

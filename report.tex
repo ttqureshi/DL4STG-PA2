@@ -32,49 +32,48 @@
 \centering
 \begin{tikzpicture}[
   font=\footnotesize,
-  box/.style={draw, rounded corners=1.5pt, align=center, inner sep=2.5pt},
-  arr/.style={-{Stealth[length=1.6mm]}, semithick},
-  srcbox/.style={box, text width=3.85cm, font=\scriptsize},
-  proc/.style={box, text width=3.25cm, font=\scriptsize}
+  station/.style={draw, rounded corners=2pt, fill=white, inner sep=3.5pt, font=\footnotesize},
+  channel/.style={draw=blue!55!black, line width=1.5pt, -{Stealth[length=2.1mm]}},
+  side/.style={draw=blue!55!black, line width=0.9pt, -{Stealth[length=1.7mm]}},
+  card/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, inner sep=3pt, text width=4.15cm},
+  proc/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, inner sep=3pt, text width=3.15cm, fill=blue!5},
+  arr/.style={draw=black!75, -{Stealth[length=1.6mm]}, semithick},
 ]
 \hyphenpenalty=10000
 \exhyphenpenalty=10000
-% Top row: the river, across the text width.
-\node[box] (res) at (0.9,0) {Reservoir};
-\node[box] (s1) at (3.7,0) {S1};
-\node[box, fill=blue!10] (t1) at (5.25,1.15) {T1, gauge};
-\node[box] (s2) at (6.8,0) {S2};
-\node[box, fill=orange!18] (un) at (8.4,-1.15) {no gauge};
-\node[box] (s3) at (10.0,0) {S3};
-\node[box] (s4) at (13.4,0) {S4};
-\draw[arr] (res) -- (s1);
-\draw[arr] (s1) -- (s2);
-\draw[arr] (t1) -- (5.25,0.32);
-\draw[arr] (s2) -- (s3);
-\draw[arr] (un) -- (8.4,-0.32);
-\draw[arr] (s3) -- (s4);
-\node[font=\scriptsize, align=center] at (2.2,1.22) {R1\\rainfall only};
-\node[font=\scriptsize, align=center] at (11.7,1.22) {R2\\rainfall only};
-\node[font=\scriptsize] at (2.6,-1.95) {not to scale, downstream $\rightarrow$};
-% Bottom row: the model. One open arrow carries the two labels.
-\node[srcbox] (lev) at (2.05,-3.25) {Levels S1--S4, T1\\$(B,5,H)$ + mask + S3$-$S2};
-\node[srcbox, below=1.6mm of lev] (rain) {Rain R1, R2, on the 10-min clock\\$(B,2,H)$ + mask};
-\node[srcbox, below=1.6mm of rain] (rel) {Release history:\\actual and schedule\\$(B,1,H)$};
-\node[srcbox, below=1.6mm of rel] (fut) {Future release if announced by $t$\\$(B,1,F)$};
-\node[srcbox, below=1.6mm of fut] (stat) {$U$ and distances $(8,8)$};
-\node[font=\scriptsize, align=center, below=1.4mm of stat] {future rain and future levels:\\not inputs};
-\coordinate (join) at ([xshift=6mm]rel.east);
-\node[proc, anchor=west] (z0) at ([xshift=36mm]join) {$Z_0$ $(B,L,d)$\\$L=8\times 36+6=294$\\$H=36$ (A1), $F=6$ (A2)\\$d=64$};
-\node[proc, anchor=west] (att) at ([xshift=7mm]z0.east) {Two attention blocks\\$(B,L,d)$\\mask score $-\infty$\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
-\node[proc, below=1.8mm of att] (ro) {24 queries\\$(B,24,d)$\\4 stations $\times$ 6 leads};
-\node[proc, below=1.8mm of ro] (yhat) {$\hat Y$ $(B,4,6)$\\S1--S4, $+10$ to $+60$ min};
+% River. The channel is drawn first so the station boxes sit on top of it.
+\draw[channel] (0.15,0) -- (14.35,0);
+\node[station] (res) at (0.85,0) {Reservoir};
+\node[station] (s1) at (3.55,0) {S1};
+\node[station] (s2) at (6.55,0) {S2};
+\node[station] (s3) at (9.7,0) {S3};
+\node[station] (s4) at (13.35,0) {S4};
+\node[station, fill=blue!12] (t1) at (5.05,1.28) {T1, gauge};
+\node[station, fill=orange!20] (un) at (8.15,-1.22) {no gauge};
+\draw[side] (t1) -- (5.05,0.38);
+\draw[side] (un) -- (8.15,-0.38);
+\node[font=\scriptsize, align=center, text=blue!45!black] at (2.15,1.32) {R1\\rainfall only};
+\node[font=\scriptsize, align=center, text=blue!45!black] at (11.55,1.32) {R2\\rainfall only};
+\node[font=\scriptsize, text=black!60] at (2.35,-1.45) {not to scale, downstream $\rightarrow$};
+% Model. Masks are part of the input, and a 0 mask is dropped inside attention.
+\node[card, fill=blue!7] (lev) at (2.15,-3.55) {Levels S1--S4, T1\\$(B,5,H)$ + S3$-$S2\\\textcolor{red!65!black}{level mask $(B,5,H)$}};
+\node[card, fill=cyan!8, below=1.7mm of lev] (rain) {Rain R1, R2\\$(B,2,H)$, 10-min clock\\\textcolor{red!65!black}{rain mask; carried bin is 0}};
+\node[card, fill=black!4, below=1.7mm of rain] (rel) {Release history\\actual and schedule\\$(B,1,H)$};
+\node[card, fill=green!8, below=1.7mm of rel] (fut) {Future release $(B,1,F)$\\\textcolor{red!65!black}{mask 1 if announced,}\\\textcolor{red!65!black}{even if the schedule is flat}};
+\node[card, fill=yellow!12, below=1.7mm of fut] (stat) {$U$ and distances $(8,8)$\\static};
+\node[card, draw=black!45, dashed, below=1.8mm of stat] (notin) {not inputs\\future rain, future levels,\\actual release after $t$};
+\coordinate (join) at ([xshift=6.5mm]rel.east);
+\node[proc, anchor=west] (z0) at ([xshift=30mm]join) {$Z_0$ $(B,L,d)$\\$L=8\times 36+6=294$\\$H=36$ (A1), $F=6$ (A2)\\$d=64$};
+\node[proc, anchor=west] (att) at ([xshift=5mm]z0.east) {Two attention blocks\\$(B,L,d)$\\\textcolor{red!65!black}{mask 0 $\rightarrow$ score $-\infty$}\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
+\node[proc, fill=white, below=2mm of att] (ro) {24 queries $(B,24,d)$\\4 stations $\times$ 6 leads};
+\node[proc, fill=green!10, below=2mm of ro] (yhat) {$\hat Y$ $(B,4,6)$\\S1--S4, $+10$ to $+60$ min};
 \draw[arr] (lev.east) -- (lev.east -| join);
 \draw[arr] (rain.east) -- (rain.east -| join);
 \draw[arr] (rel.east) -- (join);
 \draw[arr] (fut.east) -- (fut.east -| join);
 \draw[arr] (stat.east) -- (stat.east -| join);
-\draw (lev.east -| join) -- (stat.east -| join);
-\draw[arr] (join) -- node[above=2.6mm, font=\scriptsize, inner sep=1pt] {project to $d=64$} node[below=2.6mm, font=\scriptsize, inner sep=1pt] {concatenate} (z0.west);
+\draw[black!75] (lev.east -| join) -- (stat.east -| join);
+\draw[arr] (join) -- node[above=2.8mm, font=\scriptsize, inner sep=1pt] {project to $d=64$} node[below=2.8mm, font=\scriptsize, inner sep=1pt] {concatenate} (z0.west);
 \draw[arr] (z0) -- (att);
 \draw[arr] (att) -- (ro);
 \draw[arr] (ro) -- (yhat);
@@ -396,9 +395,15 @@ Inference (s) & \cell{3.81}{(4.42, 3.20)} & \cell{5.24}{(5.20, 5.28)} & \cell{4.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth,height=0.38\textheight,keepaspectratio]{figure6a.png}\\[0.4em]
-\includegraphics[width=0.72\textwidth]{figure6b.png}
-\caption{Symmetrised D+B, seed 0. (a) The Figure~3 videos: mirror 9347 and 9257, rotation 9118 and 9493. GIFs: \texttt{figures/gifs/figure6a\_cm\_rank1.gif}, \texttt{figures/gifs/figure6a\_cm\_rank2.gif}, \texttt{figures/gifs/figure6a\_cr\_rank1.gif}, \texttt{figures/gifs/figure6a\_cr\_rank2.gif}. (b) Test video 9883, the same video as Figure~5. The wrapper makes the two mirror orders agree, and the merged digit stays merged.}
+\includegraphics[width=\textwidth,height=0.90\textheight,keepaspectratio]{figure6a.png}
+\caption{Symmetrised D+B, seed 0. (a) The Figure~3 videos: mirror 9347 and 9257, rotation 9118 and 9493. Rows 3 and 4 agree. GIFs: \texttt{figures/gifs/figure6a\_cm\_rank1.gif}, \texttt{figures/gifs/figure6a\_cm\_rank2.gif}, \texttt{figures/gifs/figure6a\_cr\_rank1.gif}, \texttt{figures/gifs/figure6a\_cr\_rank2.gif}.}
+\end{figure}
+
+\begin{figure}[H]
+\ContinuedFloat
+\centering
+\includegraphics[width=\textwidth]{figure6b.png}
+\caption{Symmetrised D+B, seed 0. (b) Test video 9883, the same video as Figure~5. The wrapper makes the two mirror orders agree, and the merged digit stays merged.}
 \end{figure}
 
 \textbf{Q2.15.} The wrapper is exact and the learned symmetry is not: Model B still has \(C_M=0.00106\) and \(C_R=0.00132\), and D+B has \(7.53\times10^{-4}\) and \(9.89\times10^{-4}\), while the wrapped gaps are of order \(10^{-17}\) and \(E_M=E_R=E(5)\). Wrapped B's \(E(5)\) is 0.0218 against learned B's 0.0223, and wrapped D+B's is 0.0281 against 0.0285; the mean squared spread of the eight forecasts is \(3.91\times10^{-4}\) (worst video \(1.13\times10^{-3}\)), so the average did not raise the test error. Built-in symmetry would hurt when the eight forecasts put a digit in different places and the average smears it. The spread here is \(3.91\times10^{-4}\), so that did not happen. Inference is the cost: wrapped B takes 3.81\,s (4.42, 3.20) against learned B's 0.464\,s (0.517, 0.412), wrapped D takes 5.24\,s (5.20, 5.28) against 0.720\,s (0.725, 0.715), and wrapped D+B takes 4.95\,s (4.90, 5.00) against 0.712\,s (0.718, 0.705), about 8.2, 7.3, and 7.0 times as long, with D+B's training time still 20.72\,s per epoch (20.67, 20.78).
@@ -411,7 +416,7 @@ The final model learned the speeds that were in training, and it did not learn t
 \section*{AI use disclosure}
 I used Cursor (Composer) while coding and while drafting this report.
 
-\noindent\textbf{Coding prompts (summary):} set up the repo off Google Drive; run Table 1; check that Model A has 480{,}784 parameters; train on a Kaggle Tesla T4; make the optical-flow figure; design the river model; design Model D; train B, C, D, and D+B; symmetrise the forecaster; write the report; shorten the report and draw the Question 1 architecture; fill the missing answers flagged by the audit.
+\noindent\textbf{Coding prompts (summary):} set up the repo off Google Drive; run Table 1; check that Model A has 480{,}784 parameters; train on a Kaggle Tesla T4; make the optical-flow figure; design the river model; design Model D; train B, C, D, and D+B; symmetrise the forecaster; write the report; shorten the report and draw the Question 1 architecture; fill the missing answers flagged by the audit; enlarge Figure 6a and redraw the river diagram with the masks.
 
 {\sloppy
 \noindent\textbf{Model help on code:} wrote \texttt{transforms.py}, \texttt{windows.py}, \texttt{data.py}, \texttt{metrics.py}, \texttt{convlstm.py}, \texttt{model\_a.py}, \texttt{model\_d.py}, and \texttt{symmetrise.py}; wrote the training scripts \texttt{train\_a.py}, \texttt{train\_b.py}, \texttt{train\_c.py}, \texttt{train\_d.py}, and \texttt{train\_db.py}; ran Table 1, Figure 1, and every training and evaluation job on Kaggle (Tesla T4). Model D's dilation and the choice to train D+B were made in that work.

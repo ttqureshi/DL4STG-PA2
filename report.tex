@@ -65,8 +65,8 @@
 \node[font=\scriptsize, align=center, below=1.4mm of stat] {future rain and future levels:\\not inputs};
 \coordinate (join) at ([xshift=6mm]rel.east);
 \node[proc, anchor=west] (z0) at ([xshift=36mm]join) {$Z_0$ $(B,L,d)$\\$L=8\times 36+6=294$\\$H=36$ (A1), $F=6$ (A2)\\$d=64$};
-\node[proc, anchor=west] (att) at ([xshift=7mm]z0.east) {Two attention blocks\\mask score $-\infty$\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
-\node[proc, below=1.8mm of att] (ro) {24 queries\\4 stations $\times$ 6 leads};
+\node[proc, anchor=west] (att) at ([xshift=7mm]z0.east) {Two attention blocks\\$(B,L,d)$\\mask score $-\infty$\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
+\node[proc, below=1.8mm of att] (ro) {24 queries\\$(B,24,d)$\\4 stations $\times$ 6 leads};
 \node[proc, below=1.8mm of ro] (yhat) {$\hat Y$ $(B,4,6)$\\S1--S4, $+10$ to $+60$ min};
 \draw[arr] (lev.east) -- (lev.east -| join);
 \draw[arr] (rain.east) -- (rain.east -| join);
@@ -79,22 +79,22 @@
 \draw[arr] (att) -- (ro);
 \draw[arr] (ro) -- (yhat);
 \end{tikzpicture}
-\caption*{River, not to scale, and the forecast model. Each source has its own projection to width $d=64$ before the concatenation. $H=36$ and $F=6$ are assumptions A1 and A2.}
+\caption*{River, not to scale, and the forecast model.}
 \end{figure}
 
 The eight series are projected and concatenated, and $\hat Y$ is the six future levels at S1--S4. $H=36$, $F=6$, and $d=64$ are choices in assumptions A1 and A2.
 
 \subsection{Assumptions}
 
-The river layout, the recorded series, and the lack of a travel time are given; A1--A16 are not.
+The river layout, the recorded series, and the lack of a travel time are given; A1--A16 are not. A2, A10, A14, and A15 are design choices. The others are assumptions about the river or the record.
 
 \begin{itemize}
-\item \textbf{A1.} History is \(H=36\) bins, six hours, ending at issuance. Six hours is several times the one-hour horizon, and a longer travel time is seen only through the level it has already produced.
+\item \textbf{A1.} History is \(H=36\) bins, six hours, ending at issuance. That window has to cover the travel time between neighbouring stations. A longer travel time is seen only through the level it has already produced.
 \item \textbf{A2.} The output is six levels at each of S1--S4, at $+10$ through $+60$ minutes, so $\hat Y$ has shape $(B,4,6)$.
 \item \textbf{A3.} The archive covers at least one year, including wet and dry periods. Inference still uses only the 36-bin window.
 \item \textbf{A4.} On a normal issuance the bin that closes at $t$ has arrived. If it has not, it stays masked and the forecast still goes out.
 \item \textbf{A5.} Gauge errors are small beside a rise that matters. There is no separate denoiser.
-\item \textbf{A6.} Each rain reading goes in the 10-minute bin that contains its timestamp. An empty bin repeats the last reading and is marked carried, and a carried bin gets no attention weight.
+\item \textbf{A6.} Each rain reading goes in the 10-minute bin that contains its timestamp. An empty bin repeats the last reading and is marked carried, and a carried bin gets no attention weight, so the repeated value is not read as new rain.
 \item \textbf{A7.} Releases are piecewise constant between effective times, and the latest already-public announcement is used.
 \item \textbf{A8.} S1--S4 and T1 share 10-minute boundaries, so one lag index is the same time at every station.
 \item \textbf{A9.} Water moves downstream, and travel time is not distance divided by a constant speed.
@@ -107,38 +107,37 @@ The river layout, the recorded series, and the lack of a travel time are given; 
 \item \textbf{A16.} Along-river distance is used among the reservoir, S1--S4, and T1, and gauge-to-station distance is straight-line. Neither distance is converted into a travel time.
 \end{itemize}
 
-\subsection{Task and data table}
+\subsection{Forecasting task and data specification}
 
 An issuance runs when a 10-minute bin closes at time \(t\). The history is the \(H=36\) bins from \(t-35\Delta\) to \(t\), and the outputs are the six levels at S1--S4 for leads \(h=1,\ldots,6\). T1 is an input, and the batch size in operation is 1.
 
 \begin{table}[H]
 \centering
 \caption*{Inputs and the forecast at issuance \(t\). Shapes are after alignment and before the width-\(d\) projection. Masks are in \(\{0,1\}\).}
-\small
-\begin{tabular}{llll}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llp{3.5cm}ll}
 \toprule
-Name & Shape & Time & At issuance \\
+Name & Shape & Axes & Time & At issuance \\
 \midrule
-Level history & \((B,5,H)\) & \(t-(H-1)\Delta\ldots t\) & Known \\
-Level mask & \((B,5,H)\) & same bins & Known \\
-S3\(-\)S2 residual & \((B,5,H)\) & same; 0 if either missing & Constructed \\
-Rain, aligned & \((B,2,H)\) & level-clock bins & Past only \\
-Rain mask & \((B,2,H)\) & 1 if a real reading & Known \\
-Actual release & \((B,1,H)\) & bins ending at \(t\) & Known \\
-Schedule on history & \((B,1,H)\) & already public & Known \\
-Future release & \((B,1,F)\) & \(t+\Delta\ldots t+6\Delta\) & If announced by \(t\) \\
-Future-release mask & \((B,1,F)\) & 1 if public & Known \\
-Upstream \(U\), distances & \((8,8)\) & static & Known \\
-Forecast \(\hat Y\) & \((B,4,6)\) & \(t+\Delta\ldots t+6\Delta\) & Target, never an input \\
+Level history & \((B,5,H)\) & batch; S1, S2, S3, S4, T1; history & \(t-(H-1)\Delta\ldots t\) & Known \\
+Level mask & \((B,5,H)\) & same axes & same bins & Known \\
+S3\(-\)S2 residual & \((B,5,H)\) & same; nonzero only on S3 & same; 0 if either missing & Constructed \\
+Rain, aligned & \((B,2,H)\) & batch; R1, R2; history & level-clock bins & Past only \\
+Rain mask & \((B,2,H)\) & same axes & 1 if a real reading & Known \\
+Actual release & \((B,1,H)\) & batch; release; history & bins ending at \(t\) & Known \\
+Schedule on history & \((B,1,H)\) & same axes & already public & Known \\
+Future release & \((B,1,F)\) & batch; release; leads & \(t+\Delta\ldots t+6\Delta\) & If announced by \(t\) \\
+Future-release mask & \((B,1,F)\) & same axes & 1 if public & Known \\
+Upstream \(U\), distances & \((8,8)\) & series by series & static & Known \\
+Forecast \(\hat Y\) & \((B,4,6)\) & batch; S1--S4; six leads & \(t+\Delta\ldots t+6\Delta\) & Target, never an input \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\(B\) is the batch, the series axis is S1, S2, S3, S4, T1, R1, R2, release, and \(H\) and \(F\) are the history and lead bins.
+\subsection{Model computations and design justification}
 
-\subsection{Notation, equations, and objective}
-
-\(\Delta = 10\) minutes. Lag \(\ell = 0,\ldots,H-1\) means time \(t-\ell\Delta\). Lead \(h=1,\ldots,6\) means time \(t+h\Delta\). \(U_{j,i}=1\) when series \(j\) is upstream of series \(i\). Into S1: the release only. Into S2: the release, S1, and T1. Into S3: those plus S2. Into S4: those plus S3. A station is not upstream of itself. \(\phi(d)=-\log(1+d/d_0)\), with \(d_0\) the median static distance. \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\) are learned scalars.
+\(\Delta = 10\) minutes. Lag \(\ell = 0,\ldots,H-1\) means time \(t-\ell\Delta\). Lead \(h=1,\ldots,6\) means time \(t+h\Delta\). \(U_{j,i}=1\) when series \(j\) is upstream of series \(i\). Into S1: the release only. Into S2: the release, S1, and T1. Into S3: those plus S2. Into S4: those plus S3. A station is not upstream of itself. \(\phi(d)=-\log(1+d/d_0)\), with \(d_0\) the median static distance. In that formula \(d\) is a distance; elsewhere \(d=64\) is the token width. \(L\) is the token count, not the lookback. \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\) are learned scalars. \(\lambda_{\mathrm{up}}\) biases the score rather than masking it, so a downstream token can still be used if that scalar is small.
 
 A level token carries the standardized level, the mask, and the residual channel. Rain carries standardized rain and its mask. A history release carries actual, schedule, and the actual mask. A future release carries the announced value and the known mask. Each group has its own matrix,
 \[
@@ -152,9 +151,9 @@ A key whose mask is 0 has score \(-\infty\). The block is residual attention plu
 \[
 \frac{\sum_{s,h} m_{s,h}(\hat y^{\mathrm{std}}_{s,h}-y^{\mathrm{std}}_{s,h})^{2}}{\sum_{s,h} m_{s,h}}.
 \]
-One attention block connects every remaining token, so S4 can see the reservoir in one step, and a second block reuses a mix the first has formed. With \(L=294\) and \(d=64\), one block is about \(1.1\times 10^{7}\) multiply-adds, and the ten-minute gap is set by when the gauges arrive. The release is the only upstream series into S1, and T1 enters at S2. Rain and the S3$-$S2 residual reach a station as tokens in the same attention, and they are not rows of \(U\). What is fixed is the series list, \(U\), and the rule that an announcement enters only if it is already public. What is learned is every matrix, both blocks, the readout, and the two scalars \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\).
+One attention block connects every remaining token, so S4 can see the reservoir in one step, and a second block reuses a mix the first has formed. Attention is used instead of a recurrent stack because that path has to exist inside one issuance. With \(L=294\) and \(d=64\), the projections, the scores, and the width-\(4d\) feed-forward layer are about \(2.4\times 10^{7}\) multiply-adds per block. The release is the only upstream series into S1, and T1 enters at S2. Rain and the S3$-$S2 residual reach a station as tokens in the same attention, and they are not rows of \(U\). Both rain gauges are therefore visible at every station, and the distance feature is what tells them apart. What is fixed is the series list, \(U\), and the rule that an announcement enters only if it is already public. What is learned is every matrix, both blocks, the readout, and the two scalars \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\).
 
-\subsection{Operation}
+\subsection{Operation and exceptional conditions}
 
 \textbf{Missing observations.} A missing value is set to 0 after standardization and its mask to 0, so that token gets score \(-\infty\).
 
@@ -166,9 +165,11 @@ One attention block connects every remaining token, so S4 can see the reservoir 
 
 Each issuance is one forward pass of two attention blocks over 294 tokens of width 64 and 24 queries, which fits between the ten-minute bins.
 
-\subsection{Uncertainties and limitations}
+\subsection{Uncertainty, limitations, and additional information}
 
-The unmonitored tributary can raise S3 and S4 with no trace in S2, T1, the release, or R1 and R2 until that water reaches S3. I use the S3$-$S2 residual and S3's history, and S4 reads those tokens in one attention block. Inflow that has not reached S3 by \(t\) is still unseen.
+The readout is a point forecast. The loss is mean squared error, so there is no variance and no quantile. An operator should read a large rise as the warning, and should not read the number as a confidence interval.
+
+The unmonitored tributary can raise S3 and S4 with no trace in S2, T1, the release, or R1 and R2 until that water reaches S3. I use the S3$-$S2 residual and S3's history, and S4 reads those tokens in one attention block. That residual is not a measured inflow: the gauges have different datums, and the same-time difference ignores the travel lag, so the block learns a mapping from the channel. Inflow that has not reached S3 by \(t\) is still unseen.
 
 A changing travel time can put a peak in the wrong 10-minute bin. The model attends over every lag in the \(H=36\) window, with a separate query for each of the six leads, and uses distance as a feature. A travel time longer than \(H\), or a speed change during the future hour, is still unseen.
 
@@ -185,18 +186,19 @@ The same mirror, rotation, and window functions are used in the experiments. See
 \begin{table}[H]
 \centering
 \caption{Geometry and window checks. Maximum absolute difference is 0 and \texttt{torch.equal} is true for (a)--(c).}
-\begin{tabular}{ll}
+\small
+\begin{tabular}{lll}
 \toprule
-Check & Result \\
+Check & Expected & Yours \\
 \midrule
-(a) \(\max|M(M(x))-x|\) & 0, equal \\
-(b) \(\max|R^{4}(x)-x|\) & 0, equal \\
-(c) \(\max|MRM(x)-R^{-1}(x)|\) & 0, equal \\
-(d) bright pixel of \(M(p)\) & \((7,10,43)\) \\
-(e) bright pixel of \(R(p)\) & \((7,43,10)\) \\
-(f) \(1\times\), \(t=1\) & inputs 1--5, targets 6--10 \\
-(g) \(2\times\) & 1,3,5,7,9 / 11,13,15,17,19 \\
-(h) \(3\times\) & 1,4,7,10,13 / 16,19 \\
+(a) \(\max|M(M(x))-x|\) & 0 & 0, equal \\
+(b) \(\max|R^{4}(x)-x|\) & 0 & 0, equal \\
+(c) \(\max|MRM(x)-R^{-1}(x)|\) & 0 & 0, equal \\
+(d) bright pixel of \(M(p)\) & \((7,10,43)\) & \((7,10,43)\) \\
+(e) bright pixel of \(R(p)\) & \((7,43,10)\) & \((7,43,10)\) \\
+(f) \(1\times\), \(t=1\) & inputs 1--5, targets 6--10 & inputs 1--5, targets 6--10 \\
+(g) \(2\times\) & 1, 3, 5, 7, 9 / 11, 13, 15, 17, 19 & same \\
+(h) \(3\times\) & 1, 4, 7, 10, 13 / 16, 19 & same \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -206,12 +208,12 @@ Check & Result \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figure1.png}
-\caption{Farneback optical flow on the first 50 training videos, 950 frame pairs. Pixels kept have intensity above 0.2 in both frames and flow magnitude above 0.5. Median speed is 3.32 pixels/frame. Pixels kept: 103{,}050. Panel (a): 18 bins of \(20^{\circ}\), dashed line at \(1/18\). Panel (b): 0.5-wide bins; the hatched bar is the overflow at or above 8.}
+\caption{Farneback optical flow on the first 50 training videos, 950 frame pairs. Pixels kept have intensity above 0.2 in both frames and flow magnitude above 0.5. Median speed is 3.32 pixels/frame. Pixels kept: 103{,}050. Panel (a): 18 bins of \(20^{\circ}\), dashed line at \(1/18\). Panel (b): 0.5-wide bins; the hatched bar is the overflow at or above 8. Every direction bin is occupied, and most of the speed mass sits between 2.5 and 4.5 pixels/frame.}
 \end{figure}
 
-\textbf{Q2.1.} Every \(20^{\circ}\) bin is occupied, and the amounts are not equal. The tallest bin is \([180^{\circ},200^{\circ})\) at 0.0820, then \([340^{\circ},360^{\circ})\) at 0.0772 and \([60^{\circ},80^{\circ})\) at 0.0731, and the shortest is \([120^{\circ},140^{\circ})\) at 0.0263. A mirror moves 13.2\% of the 103{,}050 kept pixels into a different bin, and a \(90^{\circ}\) rotation moves 20.0\%. The median speed is 3.32 pixels/frame, with interquartile range 3.00 to 3.89, so \(2\times\) and \(3\times\) are 6.64 and 9.95; 0.835 of kept pixels lie between 2.5 and 4.5, the 99th percentile is 4.67, and 0.00465 exceed 5. Overlap can scatter a minority of Farneback vectors, too few to move that median.
+\textbf{Q2.1.} Yes: the mirrored and rotated motion is already familiar, and the new part is the digit shape. Every \(20^{\circ}\) bin is occupied. The tallest is \([180^{\circ},200^{\circ})\) at 0.0820, then \([340^{\circ},360^{\circ})\) at 0.0772 and \([60^{\circ},80^{\circ})\) at 0.0731, and the shortest is \([120^{\circ},140^{\circ})\) at 0.0263. A mirror moves 13.2\% of the 103{,}050 kept pixels into a different bin, and a \(90^{\circ}\) rotation moves 20.0\%. Those pixels still land in a bin the sample already has, so the percentages measure how uneven the histogram is, not a new direction. The median speed is 3.32 pixels/frame, with interquartile range 3.00 to 3.89, so \(2\times\) and \(3\times\) are 6.64 and 9.95; 0.835 of kept pixels lie between 2.5 and 4.5, the 99th percentile is 4.67, and 0.00465 exceed 5. Where two digits overlap, the flow blends their velocities, and a blend is not faster than the faster digit, so overlap cannot create the missing fast pixels or empty a direction bin.
 
-\textbf{Q2.2.} Mirror changes the glyph and sends \(\theta\) to \(180^{\circ}-\theta\), and the speed is unchanged. Rotation changes the glyph further and adds \(90^{\circ}\) to every flow angle, and the speed is unchanged. Speed-up keeps the original frames and multiplies the step between observed frames by two or three.
+\textbf{Q2.2.} Mirror changes the glyph and sends \(\theta\) to \(180^{\circ}-\theta\), and the speed is unchanged. Rotation changes the glyph further and adds \(90^{\circ}\) to every flow angle, and the speed is unchanged. Speed-up keeps the original frames and multiplies the step between observed frames by two or three. The three tests are useful because each changes one factor: mirror and rotation change appearance and keep the motion, and speed-up changes the motion and keeps the appearance.
 
 \subsection{Model A, Table 2, Figure 2, Q2.3--Q2.4}
 
@@ -238,12 +240,12 @@ Parameters & 480{,}784 & 0 & 0 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figure2.png}
-\caption{Model A, seed 0, on test videos 9883, 9590, and 9449. Each block shows input frames 1--5, the five predicted frames, and ground-truth frames 6--10. Index 9590 has overlapping digits in ground-truth frame 6.}
+\caption{Model A, seed 0, on test videos 9883, 9590, and 9449. Each block shows input frames 1--5, the five predicted frames, and ground-truth frames 6--10. The three videos were chosen from the true frames: 9590 is the overlap case in frames 6--10, and 9883 and 9449 are the two clips whose digits stay furthest apart. The forecast follows separate digits and smears the crossing.}
 \end{figure}
 
 \textbf{Q2.3.} Model A's one-step reach is 8 original pixels. \texttt{pixel\_unshuffle(4)} leaves a \(16\times 16\) grid whose neighbouring cells are 4 original pixels apart, centre to centre. The fold, the \(1\times 1\) head, and \texttt{pixel\_shuffle} do not move information to another cell. Each \(3\times 3\) kernel moves one folded cell. Inside one step the new input passes through layer 1 and then through layer 2, which reads layer 1's new hidden state. That is two cells, \(2\times 4 = 8\) original pixels. The previous hidden state of layer 1 travels the same two kernels. The previous hidden state of layer 2 travels only one, which is 4 original pixels. The longest path is \(u_{\tau}\rightarrow\) layer-1 \(3\times 3\rightarrow h^{(1)}_{\tau}\rightarrow\) layer-2 \(3\times 3\rightarrow\hat x_{\tau+1}\).
 
-\textbf{Q2.4.} Model A's \(E(5)\) of 0.0221 is below Blank (0.0426) and Copy-last (0.0641) at every horizon. The seed-mean error grows from 0.0169 at horizon 1 to 0.0261 at horizon 5, and horizon 5 is still below Blank. Copy-last leaves ink where the digit has left. On 9883 and 9449 the forecast is a soft mark near each separate digit; on 9590 the digits cross and the seed-0 forecast is still one smear at frames 9 and 10, where the truth has separated.
+\textbf{Q2.4.} Model A's \(E(5)\) of 0.0221 is below Blank (0.0426) and Copy-last (0.0641) at every horizon. The seed-mean error grows from 0.0169 at horizon 1 to 0.0261 at horizon 5, and horizon 5 is still below Blank, because each prediction is fed back as the next input and the error carries forward. Copy-last leaves ink where the digit has left. On 9883 and 9449 the forecast is a soft mark near each separate digit; on 9590 the digits cross and the seed-0 forecast is still one smear at frames 9 and 10, where the truth has separated. The smear is the conditional mean of the futures the model cannot tell apart.
 
 \subsection{Q2.5}
 
@@ -277,27 +279,27 @@ It should break at \(3\times\), and \(2\times\) should already be strained for t
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figure3.png}
-\caption{Seed-0 Model A. Mirror ranks are test videos 9347 (\(C_M=0.00624\)) and 9257 (\(C_M=0.00466\)). Rotation ranks are 9118 (\(C_R=0.00729\)) and 9493 (\(C_R=0.00676\)). Each panel has four rows: \(X\mid f(X)\); \(T(X)\mid T(Y)\); \(T(X)\mid f(T(X))\); \(T(X)\mid T(f(X))\). GIFs: \texttt{figures/gifs/figure3\_cm\_rank1.gif}, \texttt{figures/gifs/figure3\_cm\_rank2.gif}, \texttt{figures/gifs/figure3\_cr\_rank1.gif}, \texttt{figures/gifs/figure3\_cr\_rank2.gif}.}
+\caption{Seed-0 Model A. Mirror ranks are test videos 9347 (\(C_M=0.00624\)) and 9257 (\(C_M=0.00466\)). Rotation ranks are 9118 (\(C_R=0.00729\)) and 9493 (\(C_R=0.00676\)). Each panel has four rows: \(X\mid f(X)\); \(T(X)\mid T(Y)\); \(T(X)\mid f(T(X))\); \(T(X)\mid T(f(X))\). GIFs: \texttt{figures/gifs/figure3\_cm\_rank1.gif}, \texttt{figures/gifs/figure3\_cm\_rank2.gif}, \texttt{figures/gifs/figure3\_cr\_rank1.gif}, \texttt{figures/gifs/figure3\_cr\_rank2.gif}. Rows 3 and 4 disagree, and the rotation panels disagree more.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{figure4.png}
-\caption{Per-video \(C_M\) and \(C_R\) of seed-0 Model A on the 1{,}000 test videos. The Figure~3 videos are marked.}
+\caption{Per-video \(C_M\) and \(C_R\) of seed-0 Model A on the 1{,}000 test videos. The Figure~3 videos are marked. Rotation gaps are larger on average.}
 \end{figure}
 
 \begin{table}[H]
 \centering
-\caption{Speed comparison at \(t=1\). \(E(5)\) at \(3\times\) is omitted.}
-\begin{tabular}{lcc}
+\caption{Speed comparison at \(t=1\). \(E(5)\) at \(3\times\) is omitted. Blank is deterministic.}
+\begin{tabular}{lccc}
 \toprule
- & Model A & Copy-last \\
+ & Model A & Blank & Copy-last \\
 \midrule
-\(E(2)\), \(1\times\) & 0.0186 (0.0191, 0.0181) & 0.0548 \\
-\(E(2)\), \(2\times\) & 0.0448 (0.0449, 0.0448) & 0.0661 \\
-\(E(2)\), \(3\times\) & 0.0520 (0.0528, 0.0511) & 0.0703 \\
-\(E(5)\), \(1\times\) & 0.0221 (0.0225, 0.0216) & 0.0641 \\
-\(E(5)\), \(2\times\) & 0.0490 (0.0486, 0.0493) & 0.0719 \\
+\(E(2)\), \(1\times\) & 0.0186 (0.0191, 0.0181) & 0.0426 & 0.0548 \\
+\(E(2)\), \(2\times\) & 0.0448 (0.0449, 0.0448) & 0.0425 & 0.0661 \\
+\(E(2)\), \(3\times\) & 0.0520 (0.0528, 0.0511) & 0.0426 & 0.0703 \\
+\(E(5)\), \(1\times\) & 0.0221 (0.0225, 0.0216) & 0.0426 & 0.0641 \\
+\(E(5)\), \(2\times\) & 0.0490 (0.0486, 0.0493) & 0.0425 & 0.0719 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -305,18 +307,18 @@ It should break at \(3\times\), and \(2\times\) should already be strained for t
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figure5.png}
-\caption{Seed-0 Model A on test video 9883. Five inputs and the first two predicted and true futures at \(1\times\), \(2\times\), and \(3\times\). The displayed true frames keep the two digits apart.}
+\caption{Seed-0 Model A on test video 9883. Five inputs and the first two predicted and true futures at \(1\times\), \(2\times\), and \(3\times\). The displayed true frames keep the two digits apart. At \(2\times\) and \(3\times\) the forecast is one blob.}
 \end{figure}
 
-\textbf{Q2.6.} Blank and Copy-last have \(C_M=C_R=0\), and their transformed errors equal their \(E(5)\), 0.0426 and 0.0641. A zero gap can sit on a wrong forecast, so \(C_T\) is reported next to \(E_T\).
+\textbf{Q2.6.} Blank and Copy-last have \(C_M=C_R=0\), and their transformed errors equal their \(E(5)\), 0.0426 and 0.0641. A forecaster that ignores its input is also perfectly consistent, so a low \(C_T\) on its own can mean a useless forecast. \(C_T\) is reported next to \(E_T\).
 
 \textbf{Q2.7.} On video 9347, seed 0, row 3 still has two digits at horizon 5, with the second digit too far down and not far enough left, while row 4 is one blob. The per-video \(C_M\) is 0.00624.
 
-\textbf{Q2.8.} Rotation is harder than mirroring for Model A: \(C_R=0.00308\) against \(C_M=0.00183\), and \(E_R=0.0238\) against \(E_M=0.0227\). Rotation moves 20.0\% of the kept flow against 13.2\% for the mirror, and it changes the glyph further, while the speed is the same under both.
+\textbf{Q2.8.} Rotation is harder than mirroring for Model A: \(C_R=0.00308\) against \(C_M=0.00183\), and \(E_R=0.0238\) against \(E_M=0.0227\). The speed is the same under both, and every direction bin is already occupied, so the transformed motion is familiar. A \(90^{\circ}\) turn lays the digit on its side, a shape the \(1\times\) training did not show, while a flip keeps vertical strokes vertical. The larger gap is appearance.
 
-\textbf{Q2.9.} Model A falls apart at \(2\times\), and \(3\times\) is worse: \(E(2)\) goes from 0.0186 at \(1\times\) to 0.0448 at \(2\times\), above Blank's 0.0426, and to 0.0520 at \(3\times\). The \(2\times\) median step of 6.64 is inside the 8-pixel reach, so a step near that edge, and the tail past 8, breaks the forecast before the typical \(3\times\) step of 9.95. In Figure~5 the \(1\times\) forecast follows both digits, and at \(2\times\) and \(3\times\) it is one soft blob.
+\textbf{Q2.9.} Model A falls apart at \(2\times\), and \(3\times\) is worse: \(E(2)\) goes from 0.0186 at \(1\times\) to 0.0448 at \(2\times\), above Blank's 0.0425, and to 0.0520 at \(3\times\). The typical \(2\times\) step is 6.64, above the \(1\times\) 99th percentile of 4.67, so almost none of the training motion was that fast, even though 6.64 is inside the 8-pixel reach. The soft blob is the conditional mean over positions the model cannot pin down. In Figure~5 the \(1\times\) forecast follows both digits, and at \(2\times\) and \(3\times\) it is one soft blob.
 
-\textbf{Q2.10.} The baseline does not separate a missing fast example from a step beyond reach, because Model A never saw \(2\times\) or \(3\times\) and its reach is 8 pixels. Models C and D are that experiment: C keeps A's architecture and adds speeds \(\{1,2,3\}\), and D keeps that schedule and lengthens the reach.
+\textbf{Q2.10.} The baseline does not separate a missing fast example from a step beyond reach, because Model A never saw \(2\times\) or \(3\times\) and its reach is 8 pixels. Models C and D are that experiment: C keeps A's architecture and adds speeds \(\{1,2,3\}\), and D keeps that schedule and lengthens the reach. If C fixes \(3\times\), the failure was unfamiliar motion. If C still fails at \(3\times\) and D does not, it was reach.
 
 \subsection{Q2.11}
 
@@ -328,7 +330,7 @@ Model B should close the mirror and rotation gaps, the rotation gap most of all,
 
 Model B is Model A trained at \(1\times\) with one uniform draw from the eight elements of \(G\) applied to the input and the target. Model C is Model A trained with \(k\) drawn from \(\{1,2,3\}\) and no symmetry augmentation. Model D is the same schedule as C, with dilation 2 and padding 2 on both \(3\times 3\) layers. Dilation does not add weights, so D also has 480{,}784 parameters, under the cap of 721{,}176. No attention is used.
 
-\textbf{Q2.12.} Model D's one-step reach is 16 original pixels, against Model A's 8. A \(3\times 3\) kernel with dilation 2 reads offsets \(-2,0,+2\), so one layer moves 2 folded cells, which is 8 original pixels. The new input passes through both layers, and layer 2 reads layer 1's new hidden state, so the longest path is 4 folded cells, \(4\times 4 = 16\). The path is \(u_{\tau}\rightarrow\) layer-1 dilated \(3\times 3\rightarrow h^{(1)}_{\tau}\rightarrow\) layer-2 dilated \(3\times 3\rightarrow\hat x_{\tau+1}\). The \(1\times 1\) head and the shuffles add nothing. The previous state of layer 2 travels only one dilated kernel, which is 8 original pixels.
+\textbf{Q2.12.} Model D's one-step reach is 16 original pixels, against Model A's 8. A \(3\times 3\) kernel with dilation 2 reads offsets \(-2,0,+2\), so one layer moves 2 folded cells, which is 8 original pixels. The new input passes through both layers, and layer 2 reads layer 1's new hidden state, so the longest path is 4 folded cells, \(4\times 4 = 16\). The path is \(u_{\tau}\rightarrow\) layer-1 dilated \(3\times 3\rightarrow h^{(1)}_{\tau}\rightarrow\) layer-2 dilated \(3\times 3\rightarrow\hat x_{\tau+1}\). The \(1\times 1\) head and the shuffles add nothing. The previous state of layer 2 travels only one dilated kernel, which is 8 original pixels. One path moves an even number of folded cells, 0, 2, or 4, so an odd offset is reached only by combining paths. The reach is the longest path. Dilation adds no weights; a \(5\times 5\) kernel on both layers would pass the cap of 721{,}176.
 
 \begin{table}[H]
 \centering
@@ -355,9 +357,9 @@ Inference (s) & 0.461 & 0.464 & 0.453 & 0.720 \\
 \end{tabular}
 \end{table}
 
-\textbf{Q2.13.} The mirror and rotation gaps are appearance: Model B cuts \(C_M\) from 0.00183 to 0.00106 and \(C_R\) from 0.00308 to 0.00132, with \(E(5)\) still 0.0223 and \(E(2)\) still 0.0446 at \(2\times\) and 0.0506 at \(3\times\). The \(2\times\) failure is unfamiliar motion: Model C, at the same 8-pixel reach, has \(E(2)=0.0288\) at \(2\times\) against Model A's 0.0448 and Model B's 0.0446, and Model D is level with C at 0.0293, inside the 6.64-pixel typical step. At \(3\times\), Model C moves \(E(2)\) from 0.0520 to 0.0335, and Model D reaches 0.0316. Most of that drop is from seeing the fast clips. The further drop from dilation is about 0.0019, close to D's extra error on the original clips.
+\textbf{Q2.13.} The mirror and rotation gaps are appearance: Model B cuts \(C_M\) from 0.00183 to 0.00106 and \(C_R\) from 0.00308 to 0.00132, with \(E(5)\) still 0.0223 and \(E(2)\) still 0.0446 at \(2\times\) and 0.0506 at \(3\times\). The \(2\times\) failure is unfamiliar motion: Model C, at the same 8-pixel reach, has \(E(2)=0.0288\) at \(2\times\) against Model A's 0.0448 and Model B's 0.0446, and Model D is level with C at 0.0293, inside the 6.64-pixel typical step. At \(3\times\), Model C moves \(E(2)\) from 0.0520 to 0.0335, and Model D reaches 0.0316. Most of that drop is from seeing the fast clips. The further drop from dilation is about 0.0019, close to D's extra error on the original clips. D is also worse than C at \(1\times\) (0.0287 against 0.0267) and at \(2\times\) (0.0293 against 0.0288). If C had still failed at \(3\times\) while D succeeded, the failure would have been reach, because the two models saw the same speeds. That is not the table. More data cannot carry information further than the architecture allows: data only changes the weights, and no weight moves information along a path the network does not have. Within one step the \(3\times 3\) stack only sees cells inside its reach.
 
-\textbf{Q2.14.} Model B's \(E(5)\) at \(1\times\) is 0.0223 against Model A's 0.0221, so the symmetry training did not cost the original clips, and it cut \(C_M\) to 0.00106 and \(C_R\) to 0.00132. Model C's \(E(5)\) rises to 0.0267, a rise of 0.00467, while \(E(2)\) falls by 0.0160 at \(2\times\) and by 0.0185 at \(3\times\), and \(E(2)\) at \(1\times\) rises from 0.0186 to 0.0230. Model D's \(E(5)\) is 0.0287; against C the \(1\times\) cost is about 0.00193 and the \(3\times\) gain is about 0.00185, and at \(2\times\) D's 0.0293 does not beat C's 0.0288.
+\textbf{Q2.14.} Model B's \(E(5)\) at \(1\times\) is 0.0223 against Model A's 0.0221, so the symmetry training did not cost the original clips, and it cut \(C_M\) to 0.00106 and \(C_R\) to 0.00132. Model C's \(E(5)\) rises to 0.0267, a rise of 0.00467, while \(E(2)\) falls by 0.0160 at \(2\times\) and by 0.0185 at \(3\times\), and \(E(2)\) at \(1\times\) rises from 0.0186 to 0.0230. Model D's \(E(5)\) is 0.0287; against C the \(1\times\) cost is about 0.00193 and the \(3\times\) gain is about 0.00185, and at \(2\times\) D's 0.0293 does not beat C's 0.0288. C's \(1\times\) cost of 0.00467 is worth the \(2\times\) and \(3\times\) gains of 0.0160 and 0.0185. D's extra reach is not: the \(3\times\) gain of about 0.00185 matches the \(1\times\) cost. B is worth it, because the gaps fall and \(E(5)\) stays at 0.0223 against A's 0.0221.
 
 \subsection{The final model}
 
@@ -365,27 +367,29 @@ Table 5 supports D+B. Model B cut the rotation gap without moving \(E(5)\), and 
 \[
 \bar f(X)=\frac{1}{8}\sum_{g\in G} g^{-1}\big(f(g(X))\big).
 \]
-For any \(h\in G\), right multiplication by \(h\) permutes \(G\) and \(h\) factors out of the average, so \(\bar f(h(X))=h(\bar f(X))\). Since \(M\) and \(R\) are in \(G\), \(C_M=C_R=0\) exactly. The measured gaps are the floating-point residual.
+For any \(h\in G\), right multiplication by \(h\) permutes \(G\). The group element only rearranges pixels, so it commutes with the average and factors out, and \(\bar f(h(X))=h(\bar f(X))\). Since \(M\) and \(R\) are in \(G\), \(C_M=C_R=0\) exactly. The measured gaps are the floating-point residual.
 
 \begin{table}[H]
 \centering
-\caption{Symmetrised forecasters. Training time is the underlying model's seconds per epoch. Inference includes all eight transforms. \(C_M\) and \(C_R\) are in scientific notation.}
-\scriptsize
+\caption{Symmetrised forecasters. Each learned entry is the mean, with seed 0 and seed 1 on the next line. Training time is the underlying model's seconds per epoch. Inference includes all eight transforms. \(C_M\) and \(C_R\) are in scientific notation.}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\newcommand{\cell}[2]{\begin{tabular}[t]{@{}c@{}}#1\\{\scriptsize #2}\end{tabular}}
 \begin{tabular}{lccc}
 \toprule
  & Sym.\ B & Sym.\ D & Sym.\ D+B (final) \\
 \midrule
-\(E(5)\), \(1\times\) & 0.0218 & 0.0285 & 0.0281 (0.0284, 0.0279) \\
-\(C_M\) & \(8.43\times10^{-17}\) & \(5.47\times10^{-17}\) & \(5.65\times10^{-17}\) \\
-\(E_M\) & 0.0218 & 0.0285 & 0.0281 \\
-\(C_R\) & \(6.76\times10^{-17}\) & \(4.26\times10^{-17}\) & \(4.48\times10^{-17}\) \\
-\(E_R\) & 0.0218 & 0.0285 & 0.0281 \\
-\(E(2)\), \(1\times\) & 0.0181 & 0.0263 & 0.0259 (0.0261, 0.0257) \\
-\(E(2)\), \(2\times\) & 0.0438 & 0.0291 & 0.0286 (0.0288, 0.0285) \\
-\(E(2)\), \(3\times\) & 0.0495 & 0.0314 & 0.0309 (0.0311, 0.0306) \\
+\(E(5)\), \(1\times\) & \cell{0.0218}{(0.0221, 0.0214)} & \cell{0.0285}{(0.0282, 0.0289)} & \cell{0.0281}{(0.0284, 0.0279)} \\
+\(C_M\) & \cell{\(8.43\times10^{-17}\)}{(\(8.13\times10^{-17}\), \(8.72\times10^{-17}\))} & \cell{\(5.47\times10^{-17}\)}{(\(4.77\times10^{-17}\), \(6.17\times10^{-17}\))} & \cell{\(5.65\times10^{-17}\)}{(\(5.57\times10^{-17}\), \(5.74\times10^{-17}\))} \\
+\(E_M\) & \cell{0.0218}{(0.0221, 0.0214)} & \cell{0.0285}{(0.0282, 0.0289)} & \cell{0.0281}{(0.0284, 0.0279)} \\
+\(C_R\) & \cell{\(6.76\times10^{-17}\)}{(\(6.49\times10^{-17}\), \(7.02\times10^{-17}\))} & \cell{\(4.26\times10^{-17}\)}{(\(3.69\times10^{-17}\), \(4.84\times10^{-17}\))} & \cell{\(4.48\times10^{-17}\)}{(\(4.39\times10^{-17}\), \(4.56\times10^{-17}\))} \\
+\(E_R\) & \cell{0.0218}{(0.0221, 0.0214)} & \cell{0.0285}{(0.0282, 0.0289)} & \cell{0.0281}{(0.0284, 0.0279)} \\
+\(E(2)\), \(1\times\) & \cell{0.0181}{(0.0183, 0.0180)} & \cell{0.0263}{(0.0260, 0.0266)} & \cell{0.0259}{(0.0261, 0.0257)} \\
+\(E(2)\), \(2\times\) & \cell{0.0438}{(0.0437, 0.0439)} & \cell{0.0291}{(0.0288, 0.0295)} & \cell{0.0286}{(0.0288, 0.0285)} \\
+\(E(2)\), \(3\times\) & \cell{0.0495}{(0.0487, 0.0503)} & \cell{0.0314}{(0.0309, 0.0319)} & \cell{0.0309}{(0.0311, 0.0306)} \\
 Parameters & 480{,}784 & 480{,}784 & 480{,}784 \\
 s/epoch & 11.6 & 19.9 & 20.7 \\
-Inference (s) & 3.81 & 5.24 & 4.95 \\
+Inference (s) & \cell{3.81}{(4.42, 3.20)} & \cell{5.24}{(5.20, 5.28)} & \cell{4.95}{(4.90, 5.00)} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -394,20 +398,20 @@ Inference (s) & 3.81 & 5.24 & 4.95 \\
 \centering
 \includegraphics[width=\textwidth,height=0.38\textheight,keepaspectratio]{figure6a.png}\\[0.4em]
 \includegraphics[width=0.72\textwidth]{figure6b.png}
-\caption{Symmetrised D+B, seed 0. (a) The Figure~3 videos: mirror 9347 and 9257, rotation 9118 and 9493. GIFs: \texttt{figures/gifs/figure6a\_cm\_rank1.gif}, \texttt{figures/gifs/figure6a\_cm\_rank2.gif}, \texttt{figures/gifs/figure6a\_cr\_rank1.gif}, \texttt{figures/gifs/figure6a\_cr\_rank2.gif}. (b) Test video 9883, the same video as Figure~5.}
+\caption{Symmetrised D+B, seed 0. (a) The Figure~3 videos: mirror 9347 and 9257, rotation 9118 and 9493. GIFs: \texttt{figures/gifs/figure6a\_cm\_rank1.gif}, \texttt{figures/gifs/figure6a\_cm\_rank2.gif}, \texttt{figures/gifs/figure6a\_cr\_rank1.gif}, \texttt{figures/gifs/figure6a\_cr\_rank2.gif}. (b) Test video 9883, the same video as Figure~5. The wrapper makes the two mirror orders agree, and the merged digit stays merged.}
 \end{figure}
 
-\textbf{Q2.15.} The wrapper is exact and the learned symmetry is not: Model B still has \(C_M=0.00106\) and \(C_R=0.00132\), and D+B has \(7.53\times10^{-4}\) and \(9.89\times10^{-4}\), while the wrapped gaps are of order \(10^{-17}\) and \(E_M=E_R=E(5)\). Wrapped B's \(E(5)\) is 0.0218 against learned B's 0.0223, and wrapped D+B's is 0.0281 against 0.0285; the mean squared spread of the eight forecasts is \(3.91\times10^{-4}\) (worst video \(1.13\times10^{-3}\)), so the average did not raise the test error. Inference is the cost: wrapped B takes 3.81\,s (4.42, 3.20) against learned B's 0.464\,s (0.517, 0.412), wrapped D takes 5.24\,s (5.20, 5.28) against 0.720\,s (0.725, 0.715), and wrapped D+B takes 4.95\,s (4.90, 5.00) against 0.712\,s (0.718, 0.705), about 8.2, 7.3, and 7.0 times as long, with D+B's training time still 20.72\,s per epoch (20.67, 20.78).
+\textbf{Q2.15.} The wrapper is exact and the learned symmetry is not: Model B still has \(C_M=0.00106\) and \(C_R=0.00132\), and D+B has \(7.53\times10^{-4}\) and \(9.89\times10^{-4}\), while the wrapped gaps are of order \(10^{-17}\) and \(E_M=E_R=E(5)\). Wrapped B's \(E(5)\) is 0.0218 against learned B's 0.0223, and wrapped D+B's is 0.0281 against 0.0285; the mean squared spread of the eight forecasts is \(3.91\times10^{-4}\) (worst video \(1.13\times10^{-3}\)), so the average did not raise the test error. Built-in symmetry would hurt when the eight forecasts put a digit in different places and the average smears it. The spread here is \(3.91\times10^{-4}\), so that did not happen. Inference is the cost: wrapped B takes 3.81\,s (4.42, 3.20) against learned B's 0.464\,s (0.517, 0.412), wrapped D takes 5.24\,s (5.20, 5.28) against 0.720\,s (0.725, 0.715), and wrapped D+B takes 4.95\,s (4.90, 5.00) against 0.712\,s (0.718, 0.705), about 8.2, 7.3, and 7.0 times as long, with D+B's training time still 20.72\,s per epoch (20.67, 20.78).
 
-\textbf{Q2.16.} On video 9347, the video in Q2.7, symmetrised D+B makes rows 3 and 4 the same image: the per-video \(C_M\) is \(7.99\times10^{-17}\). Horizon 5 is still wrong. The truth has two digits and the forecast is one blob between them, because the underlying forecast had already merged and the wrapper copies that merge into both orders.
+\textbf{Q2.16.} On video 9347, the video in Q2.7, symmetrised D+B makes rows 3 and 4 the same image: the per-video \(C_M\) is \(7.99\times10^{-17}\). Horizon 5 is still wrong. The truth has two digits and the forecast is one blob between them, because the underlying forecast had already merged and the wrapper copies that merge into both orders. The wrapper fixed the disagreement between rows 3 and 4. Nothing fixed the merge.
 
 \textbf{Q2.17.}
-The final model learned the speeds that were in training, and it did not learn to keep two digits apart. Symmetrised D+B has mean \(E(2)\) 0.0259 at \(1\times\), 0.0286 at \(2\times\), and 0.0309 at \(3\times\), against Model A's 0.0186, 0.0448, and 0.0520, while Blank stays near 0.0426. On video 9883 the truth keeps two digits. The prediction is one component by frame 7 at \(1\times\) and by frame 11 at \(2\times\), and at \(3\times\) it is one blob between the two paths. A skeptic should require both centroids to track the truth on a non-overlapping clip at a speed the training loop never drew. A \(4\times\) window has not been run.
+The final model learned the speeds that were in training, and it did not learn to keep two digits apart. Symmetrised D+B has mean \(E(2)\) 0.0259 at \(1\times\), 0.0286 at \(2\times\), and 0.0309 at \(3\times\), against Model A's 0.0186, 0.0448, and 0.0520, while Blank stays near 0.0426. On video 9883 the truth keeps two digits. The prediction is one component by frame 7 at \(1\times\) and by frame 11 at \(2\times\), and at \(3\times\) it is one blob between the two paths. A skeptic should require both centroids to track the truth on a non-overlapping clip at a speed the training loop never drew. The test it has not passed is that separation on video 9883.
 
 \section*{AI use disclosure}
 I used Cursor (Composer) while coding and while drafting this report.
 
-\noindent\textbf{Coding prompts (summary):} set up the repo off Google Drive; run Table 1; check that Model A has 480{,}784 parameters; train on a Kaggle Tesla T4; make the optical-flow figure; design the river model; design Model D; train B, C, D, and D+B; symmetrise the forecaster; write the report; shorten the report and draw the Question 1 architecture.
+\noindent\textbf{Coding prompts (summary):} set up the repo off Google Drive; run Table 1; check that Model A has 480{,}784 parameters; train on a Kaggle Tesla T4; make the optical-flow figure; design the river model; design Model D; train B, C, D, and D+B; symmetrise the forecaster; write the report; shorten the report and draw the Question 1 architecture; fill the missing answers flagged by the audit.
 
 {\sloppy
 \noindent\textbf{Model help on code:} wrote \texttt{transforms.py}, \texttt{windows.py}, \texttt{data.py}, \texttt{metrics.py}, \texttt{convlstm.py}, \texttt{model\_a.py}, \texttt{model\_d.py}, and \texttt{symmetrise.py}; wrote the training scripts \texttt{train\_a.py}, \texttt{train\_b.py}, \texttt{train\_c.py}, \texttt{train\_d.py}, and \texttt{train\_db.py}; ran Table 1, Figure 1, and every training and evaluation job on Kaggle (Tesla T4). Model D's dilation and the choice to train D+B were made in that work.

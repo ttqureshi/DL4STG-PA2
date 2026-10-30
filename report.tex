@@ -85,7 +85,7 @@
 \caption*{(a) River, not to scale; water flows left to right. R1 and R2 are rain gauges only. (b) Forecast map at issuance \(t\) on the 10-minute clock. The eight series \(j\) and an announced release enter one projection, two attention blocks mix the \(L\) tokens, and the regression head issues \(\hat x^{(s)}_{t+h}\) for \(s\in\{\mathrm{S1},\mathrm{S2},\mathrm{S3},\mathrm{S4}\}\) and \(h=1,\ldots,6\). Future rain and future levels are not inputs.}
 \end{figure}
 
-The eight series are projected and concatenated, and $\hat Y$ is the six future levels at S1--S4. $H=36$, $F=6$, and $d=64$ are choices in assumptions A1 and A2.
+The eight series are projected and concatenated, and $\hat Y$ stacks the forecasts, $\hat Y_{s,h}=\hat x^{(s)}_{t+h}$ at S1--S4. $H=36$, $F=6$, and $d=64$ are choices in assumptions A1 and A2.
 
 \subsection{Assumptions}
 
@@ -140,19 +140,19 @@ Forecast \(\hat Y\) & \((B,4,6)\) & batch; S1--S4; six leads & \(t+\Delta\ldots 
 
 \subsection{Model computations and design justification}
 
-\(\Delta = 10\) minutes. Lag \(\ell = 0,\ldots,H-1\) means time \(t-\ell\Delta\). Lead \(h=1,\ldots,6\) means time \(t+h\Delta\). \(U_{j,i}=1\) when series \(j\) is upstream of series \(i\). Into S1: the release only. Into S2: the release, S1, and T1. Into S3: those plus S2. Into S4: those plus S3. A station is not upstream of itself. \(\phi(d)=-\log(1+d/d_0)\), with \(d_0\) the median static distance. In that formula \(d\) is a distance; elsewhere \(d=64\) is the token width. \(L\) is the token count, not the lookback. \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\) are learned scalars. \(\lambda_{\mathrm{up}}\) biases the score rather than masking it, so a downstream token can still be used if that scalar is small.
+\(\Delta = 10\) minutes. Lag \(\ell = 0,\ldots,H-1\) means time \(t-\ell\Delta\). Lead \(h=1,\ldots,6\) means time \(t+h\Delta\). A subscript counts bins, as in the figure: \(x^{(j)}_{t-\ell}\) is series \(j\) in the bin ending at \(t-\ell\Delta\), and \(\hat x^{(s)}_{t+h}\) is the forecast level at station \(s\) for \(t+h\Delta\). \(U_{j,j'}=1\) when series \(j\) is upstream of series \(j'\). Into S1: the release only. Into S2: the release, S1, and T1. Into S3: those plus S2. Into S4: those plus S3. A station is not upstream of itself. \(\phi(\delta)=-\log(1+\delta/\delta_0)\), with \(\delta\) a static distance and \(\delta_0\) the median one. \(L\) is the token count, not the lookback. \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\) are learned scalars. \(\lambda_{\mathrm{up}}\) biases the score rather than masking it, so a downstream token can still be used if that scalar is small.
 
-A level token carries the standardized level, the mask, and the residual channel. Rain carries standardized rain and its mask. A history release carries actual, schedule, and the actual mask. A future release carries the announced value and the known mask. Each group has its own matrix,
+A level token carries the standardized level, the mask, and the residual channel. Rain carries standardized rain and its mask. A history release carries actual, schedule, and the actual mask. A future release carries the announced value and the known mask. Each group has its own matrix. With \(v^{(j)}_{t-\ell}\) the feature vector of series \(j\) at lag \(\ell\),
 \[
-e = W_{\mathrm{group}} x + a_i + b_{\mathrm{time}},
+z^{(0)}_{j,\ell} = W_{\mathrm{group}}\, v^{(j)}_{t-\ell} + a_j + b_{\ell},
 \]
-and the token list is \(Z^{(0)}\in\mathbb{R}^{L\times d}\). For block \(n=1,2\),
+where \(a_j\) is a series embedding and \(b_\ell\) is a lag embedding. A future-release token uses its lead \(h\) and a lead embedding in place of \(\ell\) and \(b_\ell\). The tokens are the rows of \(Z^{(0)}\in\mathbb{R}^{L\times d}\), the transpose of Lecture 5's \(X\in\mathbb{R}^{d\times L}\). Block \(n=1,2\) maps \(Z^{(n-1)}\) to \(Z^{(n)}\), and token \(i\) scores token \(k\) as
 \[
-\mathrm{score}(p,q) = \frac{Q_p\cdot K_q}{\sqrt{d}} + \lambda_{\mathrm{up}} U_{\mathrm{series}(q),\mathrm{series}(p)} + \lambda_{\mathrm{dist}}\phi(d_{q,p}).
+\mathrm{score}(i,k) = \frac{Q_i\cdot K_k}{\sqrt{d}} + \lambda_{\mathrm{up}} U_{\mathrm{series}(k),\mathrm{series}(i)} + \lambda_{\mathrm{dist}}\phi(\delta_{k,i}).
 \]
-A key whose mask is 0 has score \(-\infty\). The block is residual attention plus a residual feed-forward layer of width \(4d\). The query for lead \(h\) at station \(s\) is \(q_{s,h} = W_q[z_{s,0}; e_h; \tau_s]\), where \(\tau_s\) is how many bins since \(s\) last reported. The loss, with \(m_{s,h}(t)=1\) when the target was recorded, is the mean over the batch of
+A key whose mask is 0 has score \(-\infty\). The block is residual attention plus a residual feed-forward layer of width \(4d\). The regression head attends over the rows of \(Z^{(2)}\) as keys and values. Its query for lead \(h\) at station \(s\) is \(q_{s,h} = W_{\mathrm{read}}[z^{(0)}_{s,0}; e_h; \tau_s]\), where \(z^{(0)}_{s,0}\) is the projected token of station \(s\) at lag 0, \(e_h\) is a learned lead vector, and \(\tau_s\) is how many bins since \(s\) last reported. The loss, with \(m_{s,h}(t)=1\) when the target was recorded and both levels standardized, is the mean over the batch of
 \[
-\frac{\sum_{s,h} m_{s,h}(\hat y^{\mathrm{std}}_{s,h}-y^{\mathrm{std}}_{s,h})^{2}}{\sum_{s,h} m_{s,h}}.
+\frac{\sum_{s,h} m_{s,h}(t)\,\bigl(\hat x^{(s)}_{t+h}-x^{(s)}_{t+h}\bigr)^{2}}{\sum_{s,h} m_{s,h}(t)}.
 \]
 One attention block connects every remaining token, so S4 can see the reservoir in one step, and a second block reuses a mix the first has formed. Attention is used instead of a recurrent stack because that path has to exist inside one issuance. With \(L=294\) and \(d=64\), the projections, the scores, and the width-\(4d\) feed-forward layer are about \(2.4\times 10^{7}\) multiply-adds per block. The release is the only upstream series into S1, and T1 enters at S2. Rain and the S3$-$S2 residual reach a station as tokens in the same attention, and they are not rows of \(U\). Both rain gauges are therefore visible at every station, and the distance feature is what tells them apart. What is fixed is the series list, \(U\), and the rule that an announcement enters only if it is already public. What is learned is every matrix, both blocks, the readout, and the two scalars \(\lambda_{\mathrm{up}}\) and \(\lambda_{\mathrm{dist}}\).
 

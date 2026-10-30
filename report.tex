@@ -9,7 +9,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning}
+\usetikzlibrary{arrows.meta,positioning,calc}
 \setstretch{1.1}
 \graphicspath{{figures/}}
 
@@ -32,53 +32,57 @@
 \centering
 \begin{tikzpicture}[
   font=\footnotesize,
-  station/.style={draw, rounded corners=2pt, fill=white, inner sep=3.5pt, font=\footnotesize},
-  channel/.style={draw=blue!55!black, line width=1.5pt, -{Stealth[length=2.1mm]}},
-  side/.style={draw=blue!55!black, line width=0.9pt, -{Stealth[length=1.7mm]}},
-  card/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, inner sep=3pt, text width=4.15cm},
-  proc/.style={draw, rounded corners=2pt, align=center, font=\scriptsize, inner sep=3pt, text width=3.15cm, fill=blue!5},
-  arr/.style={draw=black!75, -{Stealth[length=1.6mm]}, semithick},
+  >={Stealth[length=1.8mm]},
+  flow/.style={->, semithick},
+  gauge/.style={draw, minimum height=6mm, minimum width=9mm, inner sep=3pt},
+  rain/.style={draw, circle, inner sep=1.5pt},
+  inbox/.style={draw, fill=orange!18, minimum height=20mm, minimum width=11mm, inner sep=3pt},
+  blk/.style={draw, fill=blue!10, minimum height=20mm, align=center, inner sep=3pt},
+  outbox/.style={draw, fill=green!22, minimum height=7mm, minimum width=14mm},
+  lab/.style={font=\scriptsize, inner sep=2.5pt, align=center},
 ]
-\hyphenpenalty=10000
-\exhyphenpenalty=10000
-% River. The channel is drawn first so the station boxes sit on top of it.
-\draw[channel] (0.15,0) -- (14.35,0);
-\node[station] (res) at (0.85,0) {Reservoir};
-\node[station] (s1) at (3.55,0) {S1};
-\node[station] (s2) at (6.55,0) {S2};
-\node[station] (s3) at (9.7,0) {S3};
-\node[station] (s4) at (13.35,0) {S4};
-\node[station, fill=blue!12] (t1) at (5.05,1.28) {T1, gauge};
-\node[station, fill=orange!20] (un) at (8.15,-1.22) {no gauge};
-\draw[side] (t1) -- (5.05,0.38);
-\draw[side] (un) -- (8.15,-0.38);
-\node[font=\scriptsize, align=center, text=blue!45!black] at (2.15,1.32) {R1\\rainfall only};
-\node[font=\scriptsize, align=center, text=blue!45!black] at (11.55,1.32) {R2\\rainfall only};
-\node[font=\scriptsize, text=black!60] at (2.35,-1.45) {not to scale, downstream $\rightarrow$};
-% Model. Masks are part of the input, and a 0 mask is dropped inside attention.
-\node[card, fill=blue!7] (lev) at (2.15,-3.55) {Levels S1--S4, T1\\$(B,5,H)$ + S3$-$S2\\\textcolor{red!65!black}{level mask $(B,5,H)$}};
-\node[card, fill=cyan!8, below=1.7mm of lev] (rain) {Rain R1, R2\\$(B,2,H)$, 10-min clock\\\textcolor{red!65!black}{rain mask; carried bin is 0}};
-\node[card, fill=black!4, below=1.7mm of rain] (rel) {Release history\\actual and schedule\\$(B,1,H)$};
-\node[card, fill=green!8, below=1.7mm of rel] (fut) {Future release $(B,1,F)$\\\textcolor{red!65!black}{mask 1 if announced,}\\\textcolor{red!65!black}{even if the schedule is flat}};
-\node[card, fill=yellow!12, below=1.7mm of fut] (stat) {$U$ and distances $(8,8)$\\static};
-\node[card, draw=black!45, dashed, below=1.8mm of stat] (notin) {not inputs\\future rain, future levels,\\actual release after $t$};
-\coordinate (join) at ([xshift=6.5mm]rel.east);
-\node[proc, anchor=west] (z0) at ([xshift=30mm]join) {$Z_0$ $(B,L,d)$\\$L=8\times 36+6=294$\\$H=36$ (A1), $F=6$ (A2)\\$d=64$};
-\node[proc, anchor=west] (att) at ([xshift=5mm]z0.east) {Two attention blocks\\$(B,L,d)$\\\textcolor{red!65!black}{mask 0 $\rightarrow$ score $-\infty$}\\$\lambda_{\mathrm{up}}$, $\lambda_{\mathrm{dist}}$};
-\node[proc, fill=white, below=2mm of att] (ro) {24 queries $(B,24,d)$\\4 stations $\times$ 6 leads};
-\node[proc, fill=green!10, below=2mm of ro] (yhat) {$\hat Y$ $(B,4,6)$\\S1--S4, $+10$ to $+60$ min};
-\draw[arr] (lev.east) -- (lev.east -| join);
-\draw[arr] (rain.east) -- (rain.east -| join);
-\draw[arr] (rel.east) -- (join);
-\draw[arr] (fut.east) -- (fut.east -| join);
-\draw[arr] (stat.east) -- (stat.east -| join);
-\draw[black!75] (lev.east -| join) -- (stat.east -| join);
-\draw[arr] (join) -- node[above=2.8mm, font=\scriptsize, inner sep=1pt] {project to $d=64$} node[below=2.8mm, font=\scriptsize, inner sep=1pt] {concatenate} (z0.west);
-\draw[arr] (z0) -- (att);
-\draw[arr] (att) -- (ro);
-\draw[arr] (ro) -- (yhat);
+% (b) Forecast map at issuance t. Laid out first so the river spans the same width.
+\node[inbox] (inp) at (0,-4.8) {input};
+\node[blk, right=29mm of inp] (proj) {projection};
+\node[blk, right=32mm of proj] (a1) {attention\\block 1};
+\node[blk, right=8mm of a1] (a2) {attention\\block 2};
+\node[blk, right=8mm of a2] (head) {regression\\head};
+\node[outbox] (y) at ([yshift=22mm]head.center) {output};
+\node[anchor=west] at (inp.west |- y.center) {(b)};
+\draw[flow] ([yshift=5mm]inp.east) -- node[lab, above] {$x^{(j)}_{t-35},\ldots,x^{(j)}_{t}$} node[lab, below] {$H=36$} ([yshift=5mm]proj.west);
+\draw[flow] ([yshift=-5mm]inp.east) -- node[lab, below] {$x^{(\mathrm{rel})}_{t+1},\ldots,x^{(\mathrm{rel})}_{t+6}$\\$F=6$, if public at $t$} ([yshift=-5mm]proj.west);
+\draw[flow] (proj) -- node[lab, above] {$Z^{(0)}\in\mathbb{R}^{L\times d}$} node[lab, below] {$L=8H+F=294$\\$d=64$} (a1);
+\draw[flow] (a1) -- node[lab, above] {$Z^{(1)}$} (a2);
+\draw[flow] (a2) -- node[lab, above] {$Z^{(2)}$} (head);
+\draw[flow] (head) -- node[lab, left] {$\hat{x}^{(\mathrm{S1})}_{t+1},\ldots,\hat{x}^{(\mathrm{S4})}_{t+6}$} (y);
+\node[lab] (lam) at ($(a1.south)!0.5!(a2.south)+(0,-10mm)$) {$\lambda_{\mathrm{up}}U+\lambda_{\mathrm{dist}}\phi$\\mask $0\mapsto$ score $-\infty$};
+\draw[flow] (a1.south |- lam.north) -- (a1.south);
+\draw[flow] (a2.south |- lam.north) -- (a2.south);
+\node[lab] (q) at ([yshift=-10mm]head.south) {$q_{s,h}$\\$4\times 6=24$ queries};
+\draw[flow] (q) -- (head);
+% (a) River, downstream to the right.
+\node[gauge, anchor=west] (res) at (inp.west |- 0,0) {reservoir};
+\node[gauge] (s4) at (head.center |- 0,0) {S4};
+\node[gauge] (s1) at ($(res.center)!0.22!(s4.center)$) {S1};
+\node[gauge] (s2) at ($(res.center)!0.47!(s4.center)$) {S2};
+\node[gauge] (s3) at ($(res.center)!0.76!(s4.center)$) {S3};
+\coordinate (j1) at ($(s1)!0.5!(s2)$);
+\coordinate (j2) at ($(s2)!0.5!(s3)$);
+\node[gauge] (t1) at ([yshift=12mm]j1) {T1};
+\node[gauge, dashed] (un) at ([yshift=-12mm]j2) {tributary, no gauge};
+\draw[flow] (res) -- (s1);
+\draw[flow] (s1) -- (s2);
+\draw[flow] (s2) -- (s3);
+\draw[flow] (s3) -- (s4);
+\draw[flow] (t1) -- (j1);
+\draw[flow] (un) -- (j2);
+\node[rain] (r1) at ([yshift=12mm]$(res.center)!0.11!(s4.center)$) {R1};
+\node[lab, below=0.5mm of r1] {rainfall only};
+\node[rain] (r2) at ([yshift=12mm]$(res.center)!0.89!(s4.center)$) {R2};
+\node[lab, below=0.5mm of r2] {rainfall only};
+\node[anchor=west] at (inp.west |- t1.center) {(a)};
 \end{tikzpicture}
-\caption*{River, not to scale, and the forecast model.}
+\caption*{(a) River, not to scale; water flows left to right. R1 and R2 are rain gauges only. (b) Forecast map at issuance \(t\) on the 10-minute clock. The eight series \(j\) and an announced release enter one projection, two attention blocks mix the \(L\) tokens, and the regression head issues \(\hat x^{(s)}_{t+h}\) for \(s\in\{\mathrm{S1},\mathrm{S2},\mathrm{S3},\mathrm{S4}\}\) and \(h=1,\ldots,6\). Future rain and future levels are not inputs.}
 \end{figure}
 
 The eight series are projected and concatenated, and $\hat Y$ is the six future levels at S1--S4. $H=36$, $F=6$, and $d=64$ are choices in assumptions A1 and A2.
